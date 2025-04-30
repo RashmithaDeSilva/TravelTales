@@ -1,10 +1,10 @@
 note.txt
+6cosc022w_cw2_2025 Brief.pdf
 
 
 # Backend ---------------------------------------------------------------
-/backend/node_modules/
-/backend/.env
-/backend/restcountries.db
+/backend/country_finder_api/env/
+/backend/country_finder_api/hf_cache/
 
 
 # Frontend --------------------------------------------------------------

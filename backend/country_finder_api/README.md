@@ -95,6 +95,12 @@ pip list
     python app.py
     ```
 
+### API documentation
+* Visit this url to get swagger doc
+    ```url
+    http://localhost:5000/apidocs/
+    ```
+
 <!-- ### How to run inside the server 
 ```sh
 gunicorn -w 4 -b 0.0.0.0:5000 app:app

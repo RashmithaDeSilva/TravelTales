@@ -3,6 +3,7 @@ hf_cache/
 .dockerignore
 Dockerfile
 main.py
+test.py
 README.md
 __pycache__/
 *.pyc

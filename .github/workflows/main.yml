@@ -60,8 +60,8 @@ jobs:
           name: test-results
           path: backend/country_finder_api/test_results.txt
 
-      - name: Push Docker image to Docker Hub
-        run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/country_finder_api:${{ secrets.COUNTRY_FINDER_API_VERSION }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/country_finder_api:latest
+      # - name: Push Docker image to Docker Hub
+      #   run: |
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/country_finder_api:${{ secrets.COUNTRY_FINDER_API_VERSION }}
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/country_finder_api:latest
 

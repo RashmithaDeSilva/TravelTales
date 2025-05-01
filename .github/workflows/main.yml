@@ -39,6 +39,7 @@ jobs:
       - name: Run test script
         run: |
           cd backend/country_finder_api
+          wget http://localhost:5000/apidocs/
           python -V
           python test.py
 

@@ -214,6 +214,27 @@ def get_result(job_id):
             "result": job["result"] if job["status"] == "done" else {}
         })
 
+@app.route("/status", methods=["GET"])
+def get_status():
+    """
+    Get API status
+    ---
+    summary: Get API status
+    description: Returns the operational status of the API.
+    responses:
+      200:
+        description: Successful response with status
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: boolean
+                  example: true
+    """
+    return jsonify({ "status": True })
+
 # ------------------------------------------------------------------------------ #
 # Graceful shutdown handling with manual timeout
 # ------------------------------------------------------------------------------ #

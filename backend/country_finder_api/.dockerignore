@@ -1,6 +1,11 @@
+.env
+hf_cache/
+.dockerignore
+Dockerfile
+main.py
+README.md
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.env
-hf_cache/
+

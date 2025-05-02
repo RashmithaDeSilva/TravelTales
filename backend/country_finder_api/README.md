@@ -8,7 +8,7 @@ This country finding API finds countries based on user description using `zero-s
 
 ### Table of content
 * [Env Setup](#env-setup)
-* [API Runs](#api-runs)
+* [API Setup](#api-setup)
 
 <br><br>
 

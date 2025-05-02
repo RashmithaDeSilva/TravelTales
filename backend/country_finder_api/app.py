@@ -4,6 +4,7 @@ import uuid
 import time
 import threading
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from flasgger import Swagger
 from concurrent.futures import ThreadPoolExecutor
 import signal
@@ -39,7 +40,17 @@ def batch_labels(labels, batch_size=25):
 # Flask app setup with Swagger
 # ------------------------------------------------------------------------------ #
 app = Flask(__name__)
-swagger = Swagger(app)
+CORS(app)
+swagger = Swagger(app, template={
+    "info": {
+        "title": "Country Finder API",
+        "description": "API for asynchronous country finder zero-shot-classification using valhalla/distilbart-mnli-12-1",
+        "version": "1.0"
+    },
+    "host": "localhost:5000",
+    "basePath": "/",
+    "schemes": ["http"]
+})
 
 # ------------------------------------------------------------------------------ #
 # Threading and job management
@@ -238,7 +249,6 @@ def get_status():
 # ------------------------------------------------------------------------------ #
 # Graceful shutdown handling with manual timeout
 # ------------------------------------------------------------------------------ #
-
 def shutdown_handler(sig, frame):
     """Gracefully shutdown the Flask app and background threads."""
     print("Shutting down gracefully...")

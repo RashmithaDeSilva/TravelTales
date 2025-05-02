@@ -5,6 +5,12 @@ note.txt
 # Backend ---------------------------------------------------------------
 /backend/country_finder_api/env/
 /backend/country_finder_api/hf_cache/
+/backend/country_finder_api/results.txt
+
+/backend/toxicity_detection_api/env/
+/backend/toxicity_detection_api/hf_cache/
+/backend/toxicity_detection_api/model_cache/
+/backend/toxicity_detection_api/results.txt
 
 
 # Frontend --------------------------------------------------------------

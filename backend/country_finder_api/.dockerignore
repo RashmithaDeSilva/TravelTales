@@ -5,6 +5,7 @@ Dockerfile
 main.py
 test.py
 README.md
+results.txt
 __pycache__/
 *.pyc
 *.pyo

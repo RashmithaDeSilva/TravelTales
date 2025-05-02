@@ -57,7 +57,7 @@ jobs:
       - name: Upload test results
         uses: actions/upload-artifact@v4
         with:
-          name: results
+          name: country_finder_api_results
           path: backend/country_finder_api/results.txt
 
       - name: Push Docker image to Docker Hub
@@ -116,7 +116,7 @@ jobs:
       - name: Upload test results
         uses: actions/upload-artifact@v4
         with:
-          name: results
+          name: toxicity_detection_api_results
           path: backend/toxicity_detection_api/results.txt
 
       - name: Push Docker image to Docker Hub

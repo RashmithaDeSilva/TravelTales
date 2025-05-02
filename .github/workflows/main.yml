@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  country_finder_api_container_build_test_push:
+  Country_Finder_API_Container_Build_Test_Push:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -60,12 +60,12 @@ jobs:
           name: test-results
           path: backend/country_finder_api/results.txt
 
-      - name: Push Docker image to Docker Hub
-        run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/country_finder_api:${{ secrets.COUNTRY_FINDER_API_VERSION }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/country_finder_api:latest
+      # - name: Push Docker image to Docker Hub
+      #   run: |
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/country_finder_api:${{ secrets.COUNTRY_FINDER_API_VERSION }}
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/country_finder_api:latest
 
-  toxicity_detection_api_container_build_test_push:
+  Toxicity_Detection_API_Container_Build_Test_Push:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -92,10 +92,10 @@ jobs:
 
       - name: Run Docker container
         run: |
-          docker run -d -p 5000:5000 --name temp_container ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_api:latest
+          docker run -d -p 5001:5001 --name temp_container ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_api:latest
           echo "Waiting for API to be ready..."
           for i in {1..30}; do
-            if curl -s http://localhost:5000/status > /dev/null; then
+            if curl -s http://localhost:5001/status > /dev/null; then
               echo "API is up!"
               break
             fi

@@ -1,10 +1,11 @@
-.env
-hf_cache/
+.env/
 .dockerignore
 Dockerfile
 main.py
 test.py
 README.md
+hf_cache/
+model_cache/
 results.txt
 __pycache__/
 *.pyc

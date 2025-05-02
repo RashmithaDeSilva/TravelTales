@@ -1,10 +1,17 @@
 # Country Finder API
 
-This country finding API finds countries based on user description using `zero-shot-classification` ML model.
+This Toxicity Detection API ditect users discription toxicity using `Multi-Label Text Classification` model.
 
 ### Used Models
-* [valhalla/distilbart-mnli-12-1](https://huggingface.co/valhalla/distilbart-mnli-12-1)
-* [facebook/bart-large-mnli](https://huggingface.co/facebook/bart-large-mnli)
+- [Detoxify Github](https://github.com/unitaryai/detoxify)
+- [Detoxify Huggingface](https://huggingface.co/unitary/toxic-bert)
+
+| Model          | Backbone           | Trained Language(s)                      | Special Focus                       |
+| -------------- | ------------------ | ---------------------------------------- | ----------------------------------- |
+| `original`     | BERT (bert-base)   | English                                  | Standard toxicity detection         |
+| `unbiased`     | BERT (bert-base)   | English                                  | Debiased model (less identity bias) |
+| `multilingual` | XLM-RoBERTa (base) | 7 Languages (EN, FR, ES, IT, PT, TR, RU) | Multi-language support              |
+
 
 ### Table of content
 * [Env Setup](#env-setup)
@@ -98,7 +105,7 @@ pip list
 ### API documentation
 * Visit this url to get swagger doc
     ```url
-    http://localhost:5000/apidocs/
+    http://localhost:5001/apidocs/
     ```
 
 <!-- ### How to run inside the server 

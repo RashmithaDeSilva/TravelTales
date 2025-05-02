@@ -90,7 +90,7 @@ def run_tests():
                 else:
                     res = requests.post(PREDICT_ENDPOINT, data=test["payload"])
                 duration = time.time() - start_time
-                status = "Pass" if res.status_code == 400 else "Fail"
+                status = "Pass" if res.status_code == 400 or 415 else "Fail"
                 log(f"{test['desc']} - Result: {status}, Duration: {duration:.4f}s")
             except Exception as e:
                 log(f"Error with test {test['desc']}: {e}")

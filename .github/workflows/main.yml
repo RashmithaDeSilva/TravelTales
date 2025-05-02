@@ -57,13 +57,13 @@ jobs:
       - name: Upload test results
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
+          name: results
           path: backend/country_finder_api/results.txt
 
-      # - name: Push Docker image to Docker Hub
-      #   run: |
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/country_finder_api:${{ secrets.COUNTRY_FINDER_API_VERSION }}
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/country_finder_api:latest
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/country_finder_api:${{ secrets.COUNTRY_FINDER_API_VERSION }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/country_finder_api:latest
 
   Toxicity_Detection_API_Container_Build_Test_Push:
     runs-on: ubuntu-latest
@@ -116,7 +116,7 @@ jobs:
       - name: Upload test results
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
+          name: results
           path: backend/toxicity_detection_api/results.txt
 
       - name: Push Docker image to Docker Hub

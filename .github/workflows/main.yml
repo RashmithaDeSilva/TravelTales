@@ -83,11 +83,11 @@ jobs:
       - name: Build Docker image
         run: |
           cd backend/toxicity_detection_api
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_api:${{ secrets.COUNTRY_FINDER_API_VERSION }} .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_api:${{ secrets.TOXICITY_DETECTION_API_VERSION }} .
 
       - name: Tag Docker image with latest
         run: |
-          docker tag ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_api:${{ secrets.COUNTRY_FINDER_API_VERSION }} \
+          docker tag ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_api:${{ secrets.TOXICITY_DETECTION_API_VERSION }} \
                      ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_api:latest
 
       - name: Run Docker container
@@ -121,5 +121,5 @@ jobs:
 
       - name: Push Docker image to Docker Hub
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_api:${{ secrets.COUNTRY_FINDER_API_VERSION }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_api:${{ secrets.TOXICITY_DETECTION_API_VERSION }}
           docker push ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_api:latest

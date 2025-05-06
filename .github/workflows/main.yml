@@ -149,20 +149,60 @@ jobs:
           docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:${{ secrets.USER_SERVICE_API_VERSION }} \
                      ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:latest
 
-      - name: Run Docker container
+      - name: Create Docker network
         run: |
-          docker run -d --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=12345 mysql
-          docker run -d --name redis -p 6379:6379 redis:7.4-alpine3.21
-          docker run -d -p 3002:3002 --name temp_container ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:latest
-          echo "Waiting for API to be ready..."
+          docker network create \
+            --subnet=172.18.0.0/16 \
+            traveltales_net
+
+      - name: Start MySQL
+        run: |
+          docker run -d \
+            --name mysql \
+            --network traveltales_net \
+            --ip 172.18.0.10 \
+            -e MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} \
+            mysql:latest
+      
+      - name: Start Redis
+        run: |
+          docker run -d \
+            --name redis \
+            --network traveltales_net \
+            --ip 172.18.0.11 \
+            redis:7.4-alpine3.21
+
+      - name: Recreate .env
+        run: |
+          cd backend/user_service_api
+          cat <<EOF > .env
+          MYSQL_DB_HOST=172.18.0.10
+          REDIS_HOST=172.18.0.11
+          EOF
+          
+
+      - name: Start User Service API
+        run: |
+          cd backend/user_service_api
+          docker run -d \
+            --name user_service_api \
+            --network traveltales_net \
+            --env-file .env \
+            -p 3002:3002 \
+            ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:latest
+
+      - name: Wait for API to come up
+        run: |
           for i in {1..30}; do
             if curl -s http://localhost:3002/api/${{ secrets.USER_SERVICE_API_VERSION }}/status > /dev/null; then
               echo "API is up!"
-              break
+              exit 0
             fi
-            echo "Waiting ($i)..."
+            echo "waiting ($i/30)…"
             sleep 1
           done
+          echo "API never became ready" >&2
+          exit 1
 
       # - name: Run test script
       #   run: |

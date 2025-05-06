@@ -3,7 +3,7 @@ name: Docker CI Pipeline
 on:
   push:
     branches:
-      - main
+      - user_api
 
 jobs:
   Country_Finder_Service_API_Container_Build_Test_Push:

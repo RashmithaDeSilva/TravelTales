@@ -151,7 +151,7 @@ jobs:
 
       - name: Run Docker container
         run: |
-          docker run -d --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD = 12345 mysql
+          docker run -d --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=12345 mysql
           docker run -d --name redis -p 6379:6379 redis:7.4-alpine3.21
           docker run -d -p 3002:3002 --name temp_container ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:latest
           echo "Waiting for API to be ready..."

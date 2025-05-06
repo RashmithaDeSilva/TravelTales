@@ -202,6 +202,9 @@ jobs:
             sleep 1
           done
           echo "API never became ready" >&2
+          docker ps
+          echo "-------------------"
+          docker ps -a
           exit 1
 
       # - name: Run test script

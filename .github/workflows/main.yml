@@ -24,16 +24,16 @@ jobs:
       - name: Build Docker image
         run: |
           cd backend/country_finder_service_api
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }} .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/traveltales/country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }} .
 
       - name: Tag Docker image with latest
         run: |
-          docker tag ${{ secrets.DOCKER_USERNAME }}/country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }} \
-                     ${{ secrets.DOCKER_USERNAME }}/country_finder_service_api:latest
+          docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales/country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }} \
+                     ${{ secrets.DOCKER_USERNAME }}/traveltales/country_finder_service_api:latest
 
       - name: Run Docker container
         run: |
-          docker run -d -p 5000:5000 --name temp_container ${{ secrets.DOCKER_USERNAME }}/country_finder_service_api:latest
+          docker run -d -p 5000:5000 --name temp_container ${{ secrets.DOCKER_USERNAME }}/traveltales/country_finder_service_api:latest
           echo "Waiting for API to be ready..."
           for i in {1..30}; do
             if curl -s http://localhost:5000/status > /dev/null; then
@@ -62,8 +62,8 @@ jobs:
 
       # - name: Push Docker image to Docker Hub
       #   run: |
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }}
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/country_finder_service_api:latest
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }}
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/country_finder_service_api:latest
 
   Toxicity_Detection_Service_API_Container_Build_Test_Push:
     runs-on: ubuntu-latest
@@ -83,16 +83,16 @@ jobs:
       - name: Build Docker image
         run: |
           cd backend/toxicity_detection_service_api
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }} .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/traveltales/toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }} .
 
       - name: Tag Docker image with latest
         run: |
-          docker tag ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }} \
-                     ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_service_api:latest
+          docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales/toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }} \
+                     ${{ secrets.DOCKER_USERNAME }}/traveltales/toxicity_detection_service_api:latest
 
       - name: Run Docker container
         run: |
-          docker run -d -p 5001:5001 --name temp_container ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_service_api:latest
+          docker run -d -p 5001:5001 --name temp_container ${{ secrets.DOCKER_USERNAME }}/traveltales/toxicity_detection_service_api:latest
           echo "Waiting for API to be ready..."
           for i in {1..30}; do
             if curl -s http://localhost:5001/status > /dev/null; then
@@ -121,8 +121,8 @@ jobs:
 
       # - name: Push Docker image to Docker Hub
       #   run: |
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }}
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_service_api:latest
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }}
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/toxicity_detection_service_api:latest
 
   User_Service_API_Container_Build_Test_Push:
     runs-on: ubuntu-latest
@@ -142,16 +142,18 @@ jobs:
       - name: Build Docker image
         run: |
           cd backend/user_service_api
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/user_service_api:${{ secrets.USER_SERVICE_API_VERSION }} .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:${{ secrets.USER_SERVICE_API_VERSION }} .
 
       - name: Tag Docker image with latest
         run: |
-          docker tag ${{ secrets.DOCKER_USERNAME }}/user_service_api:${{ secrets.USER_SERVICE_API_VERSION }} \
-                     ${{ secrets.DOCKER_USERNAME }}/user_service_api:latest
+          docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:${{ secrets.USER_SERVICE_API_VERSION }} \
+                     ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:latest
 
       - name: Run Docker container
         run: |
-          docker run -d -p 3002:3002 --name temp_container ${{ secrets.DOCKER_USERNAME }}/user_service_api:latest
+          docker run -d --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD = 12345 mysql
+          docker run -d --name redis -p 6379:6379 redis:7.4-alpine3.21
+          docker run -d -p 3002:3002 --name temp_container ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:latest
           echo "Waiting for API to be ready..."
           for i in {1..30}; do
             if curl -s http://localhost:3002/api/${{ secrets.USER_SERVICE_API_VERSION }}/status > /dev/null; then
@@ -179,5 +181,5 @@ jobs:
 
       # - name: Push Docker image to Docker Hub
       #   run: |
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/user_service_api:${{ secrets.USER_SERVICE_API_VERSION }}
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/user_service_api:latest
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:${{ secrets.USER_SERVICE_API_VERSION }}
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:latest

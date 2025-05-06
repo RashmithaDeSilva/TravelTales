@@ -1,0 +1,4 @@
+detoxify
+flask
+flask-cors
+flasgger

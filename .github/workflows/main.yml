@@ -3,7 +3,7 @@ name: Docker CI Pipeline
 on:
   push:
     branches:
-      - user_api
+      - main
 
 jobs:
   Country_Finder_Service_API_Container_Build_Test_Push:
@@ -60,10 +60,10 @@ jobs:
           name: country_finder_service_api_results
           path: backend/country_finder_service_api/results.txt
 
-      # - name: Push Docker image to Docker Hub
-      #   run: |
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }}
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/country_finder_service_api:latest
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/country_finder_service_api:latest
 
   Toxicity_Detection_Service_API_Container_Build_Test_Push:
     runs-on: ubuntu-latest
@@ -119,10 +119,10 @@ jobs:
           name: toxicity_detection_service_api_results
           path: backend/toxicity_detection_service_api/results.txt
 
-      # - name: Push Docker image to Docker Hub
-      #   run: |
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }}
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/toxicity_detection_service_api:latest
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/toxicity_detection_service_api:latest
 
   User_Service_API_Container_Build_Test_Push:
     runs-on: ubuntu-latest
@@ -164,16 +164,13 @@ jobs:
         run: |
           for i in {1..90}; do
             if curl -s http://localhost:3002/api/${{ secrets.USER_SERVICE_API_VERSION }}/status > /dev/null; then
-              echo "API is up!"
+              echo "User Service API is up!"
               exit 0
             fi
             echo "waiting ($i/30)…"
             sleep 1
           done
-          echo "API never became ready" >&2
-          docker ps
-          echo "-------------------"
-          docker ps -a
+          echo "User Service API never became ready" >&2
           exit 1
 
       # - name: Run test script
@@ -189,7 +186,7 @@ jobs:
       #     name: user_service_api_results
       #     path: backend/user_service_api/results.txt
 
-      # - name: Push Docker image to Docker Hub
-      #   run: |
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:${{ secrets.USER_SERVICE_API_VERSION }}
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:latest
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:${{ secrets.USER_SERVICE_API_VERSION }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:latest

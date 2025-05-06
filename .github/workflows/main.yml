@@ -148,6 +148,14 @@ jobs:
         run: |
           docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:${{ secrets.USER_SERVICE_API_VERSION }} \
             ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:latest
+
+      - name: Recreate .env
+        run: |
+          cd backend/user_service_api
+          cat <<EOF > .env
+          MYSQL_HOST=172.20.5.10
+          REDIS_HOST=172.20.5.11
+          EOF
       
       - name: Start Docker Compose
         run: docker compose up -d

@@ -152,7 +152,7 @@ jobs:
       - name: Create Docker network
         run: |
           docker network create \
-            --subnet=172.18.0.0/16 \
+            --subnet=172.20.5.0/24 \
             traveltales_net
 
       - name: Start MySQL
@@ -160,7 +160,7 @@ jobs:
           docker run -d \
             --name mysql \
             --network traveltales_net \
-            --ip 172.18.0.10 \
+            --ip 172.20.5.10 \
             -e MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} \
             mysql:latest
       
@@ -169,7 +169,7 @@ jobs:
           docker run -d \
             --name redis \
             --network traveltales_net \
-            --ip 172.18.0.11 \
+            --ip 172.20.5.11 \
             redis:7.4-alpine3.21
 
       - name: Recreate .env
@@ -177,7 +177,7 @@ jobs:
           cd backend/user_service_api
           cat <<EOF > .env
           MYSQL_DB_HOST=172.18.0.10
-          REDIS_HOST=172.18.0.11
+          REDIS_HOST=172.20.5.20
           EOF
           
 

@@ -8,7 +8,7 @@ dotenv.config();
 // Create redis client
 const redisClient = createClient({
     socket: {
-        host: process.env.REDIS_DB_HOST || "localhost",
+        host: process.env.REDIS_DB_HOST || "172.20.5.11",
         port: Number(process.env.REDIS_DB_PORT) || 6379,
     },
 });

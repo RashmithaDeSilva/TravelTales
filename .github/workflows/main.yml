@@ -176,15 +176,15 @@ jobs:
         run: |
           cd backend/user_service_api
           cat <<EOF > .env
-          MYSQL_DB_HOST=172.18.0.10
-          REDIS_HOST=172.20.5.20
+          MYSQL_DB_HOST=172.20.5.10
+          REDIS_HOST=172.20.5.11
           EOF
           
 
       - name: Start User Service API
         run: |
           cd backend/user_service_api
-          docker run -d \
+          docker run \
             --name user_service_api \
             --network traveltales_net \
             --env-file .env \

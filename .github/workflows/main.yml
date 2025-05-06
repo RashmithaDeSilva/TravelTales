@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  Country_Finder_API_Container_Build_Test_Push:
+  Country_Finder_Service_API_Container_Build_Test_Push:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -23,17 +23,17 @@ jobs:
 
       - name: Build Docker image
         run: |
-          cd backend/country_finder_api
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/country_finder_api:${{ secrets.COUNTRY_FINDER_API_VERSION }} .
+          cd backend/country_finder_service_api
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }} .
 
       - name: Tag Docker image with latest
         run: |
-          docker tag ${{ secrets.DOCKER_USERNAME }}/country_finder_api:${{ secrets.COUNTRY_FINDER_API_VERSION }} \
-                     ${{ secrets.DOCKER_USERNAME }}/country_finder_api:latest
+          docker tag ${{ secrets.DOCKER_USERNAME }}/country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }} \
+                     ${{ secrets.DOCKER_USERNAME }}/country_finder_service_api:latest
 
       - name: Run Docker container
         run: |
-          docker run -d -p 5000:5000 --name temp_container ${{ secrets.DOCKER_USERNAME }}/country_finder_api:latest
+          docker run -d -p 5000:5000 --name temp_container ${{ secrets.DOCKER_USERNAME }}/country_finder_service_api:latest
           echo "Waiting for API to be ready..."
           for i in {1..30}; do
             if curl -s http://localhost:5000/status > /dev/null; then
@@ -46,7 +46,7 @@ jobs:
 
       - name: Run test script
         run: |
-          cd backend/country_finder_api
+          cd backend/country_finder_service_api
           python test.py
 
       - name: Stop and remove container
@@ -57,15 +57,15 @@ jobs:
       - name: Upload test results
         uses: actions/upload-artifact@v4
         with:
-          name: country_finder_api_results
-          path: backend/country_finder_api/results.txt
+          name: country_finder_service_api_results
+          path: backend/country_finder_service_api/results.txt
 
       # - name: Push Docker image to Docker Hub
       #   run: |
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/country_finder_api:${{ secrets.COUNTRY_FINDER_API_VERSION }}
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/country_finder_api:latest
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }}
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/country_finder_service_api:latest
 
-  Toxicity_Detection_API_Container_Build_Test_Push:
+  Toxicity_Detection_Service_API_Container_Build_Test_Push:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -82,17 +82,17 @@ jobs:
 
       - name: Build Docker image
         run: |
-          cd backend/toxicity_detection_api
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_api:${{ secrets.TOXICITY_DETECTION_API_VERSION }} .
+          cd backend/toxicity_detection_service_api
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }} .
 
       - name: Tag Docker image with latest
         run: |
-          docker tag ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_api:${{ secrets.TOXICITY_DETECTION_API_VERSION }} \
-                     ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_api:latest
+          docker tag ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }} \
+                     ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_service_api:latest
 
       - name: Run Docker container
         run: |
-          docker run -d -p 5001:5001 --name temp_container ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_api:latest
+          docker run -d -p 5001:5001 --name temp_container ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_service_api:latest
           echo "Waiting for API to be ready..."
           for i in {1..30}; do
             if curl -s http://localhost:5001/status > /dev/null; then
@@ -105,7 +105,7 @@ jobs:
 
       - name: Run test script
         run: |
-          cd backend/toxicity_detection_api
+          cd backend/toxicity_detection_service_api
           python test.py
 
       - name: Stop and remove container
@@ -116,10 +116,10 @@ jobs:
       - name: Upload test results
         uses: actions/upload-artifact@v4
         with:
-          name: toxicity_detection_api_results
-          path: backend/toxicity_detection_api/results.txt
+          name: toxicity_detection_service_api_results
+          path: backend/toxicity_detection_service_api/results.txt
 
       # - name: Push Docker image to Docker Hub
       #   run: |
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_api:${{ secrets.TOXICITY_DETECTION_API_VERSION }}
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_api:latest
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }}
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_service_api:latest

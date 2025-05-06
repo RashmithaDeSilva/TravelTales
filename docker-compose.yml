@@ -1,0 +1,59 @@
+version: '3.9'
+
+networks:
+  traveltales_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.5.0/24
+
+services:
+  mysql:
+    image: mysql
+    container_name: main_database
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+    ports:
+      - "3306:3306"
+    networks:
+      traveltales_network:
+        ipv4_address: 172.20.5.10
+
+  redis:
+    image: redis:7.4-alpine3.21
+    container_name: session_store
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      traveltales_network:
+        ipv4_address: 172.20.5.11
+
+  user_service_api:
+    image: rashmithadesilva/traveltales/user_service_api:v1
+    container_name: api
+    restart: unless-stopped
+    working_dir: /app
+    ports:
+      - "3002:3002"
+    depends_on:
+      - mysql
+      - redis
+    env_file:
+      - ./backend/user_service_api/.env
+    networks:
+      traveltales_network:
+        ipv4_address: 172.20.5.20
+
+  # frontend:
+  #   image: rashmithadesilva/traveltales_frontend:v1
+  #   container_name: frontend
+  #   restart: unless-stopped
+  #   working_dir: /app
+  #   ports:
+  #     - "3000:3000"
+  #   networks:
+  #     - traveltales_network
+  #   depends_on:
+  #     - api

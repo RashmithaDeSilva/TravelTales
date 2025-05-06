@@ -147,49 +147,10 @@ jobs:
       - name: Tag Docker image with latest
         run: |
           docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:${{ secrets.USER_SERVICE_API_VERSION }} \
-                     ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:latest
-
-      - name: Create Docker network
-        run: |
-          docker network create \
-            --subnet=172.20.5.0/24 \
-            traveltales_net
-
-      - name: Start MySQL
-        run: |
-          docker run -itd \
-            --name mysql \
-            --network traveltales_net \
-            --ip 172.20.5.10 \
-            -e MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} \
-            mysql:latest
-      
-      - name: Start Redis
-        run: |
-          docker run -itd \
-            --name redis \
-            --network traveltales_net \
-            --ip 172.20.5.11 \
-            redis:7.4-alpine3.21
-
-      - name: Recreate .env
-        run: |
-          cd backend/user_service_api
-          cat <<EOF > .env
-          MYSQL_DB_HOST=172.20.5.10
-          REDIS_HOST=172.20.5.11
-          EOF
-          
-
-      - name: Start User Service API
-        run: |
-          cd backend/user_service_api
-          docker run -d \
-            --name user_service_api \
-            --network traveltales_net \
-            --env-file .env \
-            -p 3002:3002 \
             ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:latest
+      
+      - name: Start Docker Compose
+        run: docker compose up -d
 
       - name: Wait for API to come up
         run: |
@@ -211,10 +172,8 @@ jobs:
       #   run: |
       #     cd backend/user_service_api
 
-      - name: Stop and remove container
-        run: |
-          docker stop temp_container
-          docker rm temp_container
+      - name: Stop Docker Compose
+        run: docker compose down
 
       # - name: Upload test results
       #   uses: actions/upload-artifact@v4

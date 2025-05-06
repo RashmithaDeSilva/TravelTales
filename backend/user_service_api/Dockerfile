@@ -22,4 +22,4 @@ USER app
 EXPOSE 3002
 
 # Define the default command to run your app
-CMD ["node", "index.mjs"]
+CMD ["npm", "run", "start"]

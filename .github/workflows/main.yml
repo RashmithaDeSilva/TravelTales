@@ -24,16 +24,16 @@ jobs:
       - name: Build Docker image
         run: |
           cd backend/country_finder_service_api
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }} .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/traveltales/country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }} .
 
       - name: Tag Docker image with latest
         run: |
-          docker tag ${{ secrets.DOCKER_USERNAME }}/country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }} \
-                     ${{ secrets.DOCKER_USERNAME }}/country_finder_service_api:latest
+          docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales/country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }} \
+                     ${{ secrets.DOCKER_USERNAME }}/traveltales/country_finder_service_api:latest
 
       - name: Run Docker container
         run: |
-          docker run -d -p 5000:5000 --name temp_container ${{ secrets.DOCKER_USERNAME }}/country_finder_service_api:latest
+          docker run -d -p 5000:5000 --name temp_container ${{ secrets.DOCKER_USERNAME }}/traveltales/country_finder_service_api:latest
           echo "Waiting for API to be ready..."
           for i in {1..30}; do
             if curl -s http://localhost:5000/status > /dev/null; then
@@ -60,10 +60,10 @@ jobs:
           name: country_finder_service_api_results
           path: backend/country_finder_service_api/results.txt
 
-      # - name: Push Docker image to Docker Hub
-      #   run: |
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }}
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/country_finder_service_api:latest
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/country_finder_service_api:latest
 
   Toxicity_Detection_Service_API_Container_Build_Test_Push:
     runs-on: ubuntu-latest
@@ -83,16 +83,16 @@ jobs:
       - name: Build Docker image
         run: |
           cd backend/toxicity_detection_service_api
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }} .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/traveltales/toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }} .
 
       - name: Tag Docker image with latest
         run: |
-          docker tag ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }} \
-                     ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_service_api:latest
+          docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales/toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }} \
+                     ${{ secrets.DOCKER_USERNAME }}/traveltales/toxicity_detection_service_api:latest
 
       - name: Run Docker container
         run: |
-          docker run -d -p 5001:5001 --name temp_container ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_service_api:latest
+          docker run -d -p 5001:5001 --name temp_container ${{ secrets.DOCKER_USERNAME }}/traveltales/toxicity_detection_service_api:latest
           echo "Waiting for API to be ready..."
           for i in {1..30}; do
             if curl -s http://localhost:5001/status > /dev/null; then
@@ -119,10 +119,10 @@ jobs:
           name: toxicity_detection_service_api_results
           path: backend/toxicity_detection_service_api/results.txt
 
-      # - name: Push Docker image to Docker Hub
-      #   run: |
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }}
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/toxicity_detection_service_api:latest
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/toxicity_detection_service_api:latest
 
   User_Service_API_Container_Build_Test_Push:
     runs-on: ubuntu-latest
@@ -142,34 +142,43 @@ jobs:
       - name: Build Docker image
         run: |
           cd backend/user_service_api
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/user_service_api:${{ secrets.USER_SERVICE_API_VERSION }} .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:${{ secrets.USER_SERVICE_API_VERSION }} .
 
       - name: Tag Docker image with latest
         run: |
-          docker tag ${{ secrets.DOCKER_USERNAME }}/user_service_api:${{ secrets.USER_SERVICE_API_VERSION }} \
-                     ${{ secrets.DOCKER_USERNAME }}/user_service_api:latest
+          docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:${{ secrets.USER_SERVICE_API_VERSION }} \
+            ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:latest
 
-      - name: Run Docker container
+      - name: Recreate .env
         run: |
-          docker run -d -p 3002:3002 --name temp_container ${{ secrets.DOCKER_USERNAME }}/user_service_api:latest
-          echo "Waiting for API to be ready..."
-          for i in {1..30}; do
+          cd backend/user_service_api
+          cat <<EOF > .env
+          MYSQL_HOST=172.20.5.10
+          REDIS_HOST=172.20.5.11
+          EOF
+      
+      - name: Start Docker Compose
+        run: docker compose up -d
+
+      - name: Wait for API to come up
+        run: |
+          for i in {1..90}; do
             if curl -s http://localhost:3002/api/${{ secrets.USER_SERVICE_API_VERSION }}/status > /dev/null; then
-              echo "API is up!"
-              break
+              echo "User Service API is up!"
+              exit 0
             fi
-            echo "Waiting ($i)..."
+            echo "waiting ($i/30)…"
             sleep 1
           done
+          echo "User Service API never became ready" >&2
+          exit 1
 
       # - name: Run test script
       #   run: |
       #     cd backend/user_service_api
 
-      - name: Stop and remove container
-        run: |
-          docker stop temp_container
-          docker rm temp_container
+      - name: Stop Docker Compose
+        run: docker compose down
 
       # - name: Upload test results
       #   uses: actions/upload-artifact@v4
@@ -177,7 +186,7 @@ jobs:
       #     name: user_service_api_results
       #     path: backend/user_service_api/results.txt
 
-      # - name: Push Docker image to Docker Hub
-      #   run: |
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/user_service_api:${{ secrets.USER_SERVICE_API_VERSION }}
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/user_service_api:latest
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:${{ secrets.USER_SERVICE_API_VERSION }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales/user_service_api:latest

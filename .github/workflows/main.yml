@@ -184,7 +184,7 @@ jobs:
       - name: Start User Service API
         run: |
           cd backend/user_service_api
-          docker run \
+          docker run -d \
             --name user_service_api \
             --network traveltales_net \
             --env-file .env \

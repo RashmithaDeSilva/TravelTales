@@ -11,8 +11,8 @@ class UserModel {
     }
 
     // Creating request model with passwordHash
-    static getRequestUserModel(firstName, surname, email, email_verify, contactNumber, passwordHash) {
-        return new UserModel(firstName, surname, email, contactNumber, passwordHash, null, email_verify);
+    static getRequestUserModel(firstName, surname, email, contactNumber, passwordHash) {
+        return new UserModel(firstName, surname, email, contactNumber, passwordHash);
     }
 
     // Creating response model with id

@@ -45,31 +45,6 @@ class UserDAO {
         }
     }
 
-    // Create user
-    async create(user) {
-        try {
-            // Check email is exist
-            if (await this.checkEmailIsExist(user.email)) throw new Error(DatabaseErrors.EMAIL_ALREADY_EXISTS);
-            
-            const [result] = await pool.query(`
-                INSERT INTO users (
-                    first_name, 
-                    surname, 
-                    email, 
-                    contact_number, 
-                    password_hash
-                ) values (?, ?, ?, ?, ?)
-            `, [user.firstName, user.surname, user.email, user.contactNumber, user.passwordHash]);
-
-            const userId = process.env.ENV === "PROD" ? 
-            result.insertId : await this.getUserIdByEmail(user.email);
-            return userId;
-
-        } catch (error) {
-            throw error;
-        }
-    }
-
     // Get password hash
     async getHashPasswordById(id) {
         try {

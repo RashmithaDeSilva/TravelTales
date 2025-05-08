@@ -42,6 +42,7 @@ app.use(session({
 
 // Passport setup
 app.use(passport.initialize());
+app.use(passport.session());
   
 // Routers setup
 app.use(`/api/${ API_VERSION }/`, router);

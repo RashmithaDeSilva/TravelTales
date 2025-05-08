@@ -1,18 +1,15 @@
 import { Router } from 'express';
 import dotenv from 'dotenv';
 import { validationResult, matchedData, checkSchema } from 'express-validator';
-import StandardResponse from '../utils/responses/StandardResponse.mjs';
-import UserValidationSchema from '../utils/validations/UserValidationSchema.mjs';
-import UserService from '../services/UserService.mjs';
 import isAuthenticated from '../middlewares/UserAuthMiddleware.mjs';
-import CommonErrors from '../utils/errors/CommonErrors.mjs';
-import ErrorResponse from '../utils/responses/ErrorResponse.mjs';
+import UserValidationSchema from '../utils/validations/UserValidationSchema.mjs';
+// import StandardResponse from '../utils/responses/StandardResponse.mjs';
 
 
 dotenv.config();
 const ENV = process.env.ENV;
 const router = Router();
-const userService = new UserService();
+const userServiceApi = `http://${ process.env.USER_SERVICE_API_HOST }:${ process.env.USER_SERVICE_API_PORT }/api/${ process.env.USER_SERVICE_API_VERSION }/auth/user`;
 
 
 /**
@@ -92,15 +89,28 @@ const userService = new UserService();
  *       in: cookie
  *       name: connect.sid
  */
-router.get('/info', isAuthenticated, (req, res) => {
-    const user = req.user;
-    user.id = -1;
-    return res.status(200).send(StandardResponse(
-        true,
-        "User info.",
-        user,
-        null
-    ));
+router.get('/info', isAuthenticated, async (req, res) => {
+    let response;
+    let responseStatus;
+    let responseBody;
+    try {
+        response = await fetch(`${ userServiceApi }/info`, {
+            method: 'GET',
+            headers: {
+                'Cookie': req.headers.cookie || '',
+            },
+        });
+        responseStatus = response.status;
+        responseBody = await response.json();
+        return res.status(responseStatus).send(responseBody);
+
+    } catch (error) {
+        return await ErrorResponse(error, res, '/user/info', {
+            "response": response,
+            "responseStatus": responseStatus,
+            "responseBody": responseBody,
+        });
+    }
 });
 
 /**
@@ -244,20 +254,31 @@ router.put('/update', isAuthenticated, [
 
     const data = matchedData(req);
     data.id = req.user.id
+    let response;
+    let responseStatus;
+    let responseBody;
 
     try {
-        await userService.updateUser(data);
+        response = await fetch(`${userServiceApi}/update`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cookie': req.headers.cookie || '',
+            },
+            body: JSON.stringify(data),
+        });
+        responseStatus = response.status;
+        responseBody = await response.json();
+        return res.status(responseStatus).send(responseBody);
 
     } catch (error) {
-        return await ErrorResponse(error, res, '/user/update/', data);
+        return await ErrorResponse(error, res, '/user/info', {
+            "requestData": data,
+            "response": response,
+            "responseStatus": responseStatus,
+            "responseBody": responseBody,
+        });
     }
-
-    return ENV === "DEV" ? res.status(200).send(StandardResponse(
-        true,
-        "User update successfully.",
-        null,
-        null
-    )) : res.sendStatus(204);
 });
 
 /**
@@ -407,35 +428,35 @@ router.put('/update', isAuthenticated, [
  *       in: cookie
  *       name: connect.sid
  */
-router.patch('/changepassword', isAuthenticated, [
-    checkSchema({
-        ...UserValidationSchema.oldPasswordValidation(),
-        ...UserValidationSchema.passwordValidation(),
-        ...UserValidationSchema.confirmPasswordValidation(),
-    })
-], async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return await ErrorResponse(new Error(CommonErrors.VALIDATION_ERROR), res, '/user/changepassword', errors);
-    }
+// router.patch('/changepassword', isAuthenticated, [
+//     checkSchema({
+//         ...UserValidationSchema.oldPasswordValidation(),
+//         ...UserValidationSchema.passwordValidation(),
+//         ...UserValidationSchema.confirmPasswordValidation(),
+//     })
+// ], async (req, res) => {
+//     const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//         return await ErrorResponse(new Error(CommonErrors.VALIDATION_ERROR), res, '/user/changepassword', errors);
+//     }
 
-    const data = matchedData(req);
-    data.id = req.user.id
+//     const data = matchedData(req);
+//     data.id = req.user.id
 
-    try {
-        await userService.changePassword(data);
+//     try {
+//         await userService.changePassword(data);
 
-    } catch (error) {
-        return await ErrorResponse(error, res, '/user/changepassword', data);
-    }
+//     } catch (error) {
+//         return await ErrorResponse(error, res, '/user/changepassword', data);
+//     }
 
-    return ENV === "DEV" ? res.status(200).send(StandardResponse(
-        true,
-        "Password change successfully.",
-        null,
-        null
-    )) : res.sendStatus(204);
-});
+//     return ENV === "DEV" ? res.status(200).send(StandardResponse(
+//         true,
+//         "Password change successfully.",
+//         null,
+//         null
+//     )) : res.sendStatus(204);
+// });
 
 /**
  * @swagger
@@ -512,18 +533,18 @@ router.patch('/changepassword', isAuthenticated, [
  *       in: cookie
  *       name: connect.sid
  */
-router.get('/status', isAuthenticated, async (req, res) => {
-    return res.status(200).send(StandardResponse(
-        true,
-        "User status.",
-        null,
-        null
-    ));
-});
+// router.get('/status', isAuthenticated, async (req, res) => {
+//     return res.status(200).send(StandardResponse(
+//         true,
+//         "User status.",
+//         null,
+//         null
+//     ));
+// });
 
 /**
  * @swagger
- * /api/v1/auth/user/followers&followed:
+ * /api/v1/user/followers&followed:
  *   get:
  *     summary: Get user's followers and followed count
  *     description: Retrieves the count of users who follow the authenticated user and those the user is following.
@@ -602,19 +623,19 @@ router.get('/status', isAuthenticated, async (req, res) => {
  *       in: cookie
  *       name: connect.sid
  */
-router.get('/followers&followed', isAuthenticated, async (req, res) => {
-    try {
-        const result = await userService.getFollowersAndFollowed(req.user.id);
-        return res.status(200).send(StandardResponse(
-            true,
-            "Users followers & followed",
-            result,
-            null
-        ));
+// router.get('followers&followed', isAuthenticated, async (req, res) => {
+//     try {
+//         const result = await userService.getFollowersAndFollowed(req.user.id);
+//         return res.status(200).send(StandardResponse(
+//             true,
+//             "Users followers & followed",
+//             result,
+//             null
+//         ));
 
-    } catch (error) {
-        return await ErrorResponse(error, res, '/user/followers&followed');
-    }
-});
+//     } catch (error) {
+//         return await ErrorResponse(error, res, '/user/followers&followed');
+//     }
+// });
 
 export default router;

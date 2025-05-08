@@ -48,6 +48,18 @@ class UserService {
             throw error;
         }
     }
+
+    // Get user by user id
+    async getUserById(id) {
+        try {
+            const user = await this.userDAO.getUserById(id);
+            if (!user) throw new Error(DatabaseErrors.USER_NOT_FOUND);
+            return user;
+            
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 export default UserService;

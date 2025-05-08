@@ -1,4 +1,5 @@
 import { getDatabasePool } from '../config/SQLCon.mjs';
+import UserModel from '../models/UserModel.mjs';
 import DatabaseErrors from '../utils/errors/DatabaseErrors.mjs';
 import dotenv from 'dotenv';
 
@@ -44,6 +45,28 @@ class UserDAO {
         }
     }
 
+    // Get user using email
+    async getUserByEmail(email) {
+        try {
+            // Check email is exist
+            if (!await this.checkEmailIsExist(email)) throw new Error(DatabaseErrors.INVALID_EMAIL_ADDRESS);
+            
+            const [row] = await pool.query(`SELECT * FROM users WHERE email = ?`, [email]);
+            return new UserModel(
+                row[0].first_name, 
+                row[0].surname,
+                row[0].email,
+                row[0].contact_number,
+                row[0].password_hash,
+                row[0].id,
+                row[0].verify,
+            );
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
     // Create user
     async create(user) {
         try {
@@ -68,6 +91,26 @@ class UserDAO {
             throw error;
         }
     }
+
+    // Get user using id
+    async getUserById(id) {
+        try {
+            const [row] = await pool.query(`SELECT * FROM users WHERE id = ?`, [id]);
+            return row.length === 0 ? null : new UserModel(
+                row[0].first_name, 
+                row[0].surname,
+                row[0].email,
+                row[0].contact_number,
+                row[0].password_hash,
+                row[0].id,
+                row[0].verify,
+            );
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
 }
 
 export default UserDAO;

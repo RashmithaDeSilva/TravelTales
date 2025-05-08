@@ -14,32 +14,6 @@ class UserService {
         this.userDAO = new UserDAO();
     }
 
-    // Create user
-    async createUser(data) {
-        let userId;
-        try {
-            // Generate hash
-            const hashPassword = await generateHash(data.password);
-            
-            // Create user model
-            const user = UserModel.getRequestUserModel(
-                data.first_name,
-                data.surname,
-                data.email,
-                data.contact_number,
-                hashPassword
-            );
-
-            // Save user in database
-            userId = await this.userDAO.create(user);
-
-            return userId;
-
-        } catch (error) {
-            throw error;
-        }
-    }
-
     // Update user
     async updateUser(data) {
         try {

@@ -38,6 +38,9 @@ jobs:
           MYSQL_HOST=172.20.5.10
           REDIS_HOST=172.20.5.11
           EOF
+          cd ..
+          cd user_service_api
+          touch .env
       
       - name: Start Docker Compose
         run: docker compose --profile user_api up -d
@@ -223,6 +226,9 @@ jobs:
           MYSQL_HOST=172.20.5.10
           REDIS_HOST=172.20.5.11
           EOF
+          cd ..
+          cd api_gateway
+          touch .env
       
       - name: Start Docker Compose
         run: docker compose --profile api_gateway up -d

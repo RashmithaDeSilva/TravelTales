@@ -3,7 +3,7 @@ name: Docker CI Pipeline
 on:
   push:
     branches:
-      - main
+      - api_gateway
 
 jobs:
   API_Gateway_Container_Build_Test_Push:
@@ -44,7 +44,7 @@ jobs:
 
       - name: Wait for API to come up
         run: |
-          for i in {1..90}; do
+          for i in {1..30}; do
             if curl -s http://localhost:3001/api/${{ secrets.API_GATEWAY_VERSION }}/status > /dev/null; then
               echo "API Gateway is up!"
               exit 0
@@ -229,7 +229,7 @@ jobs:
 
       - name: Wait for API to come up
         run: |
-          for i in {1..90}; do
+          for i in {1..30}; do
             if curl -s http://localhost:3002/api/${{ secrets.USER_SERVICE_API_VERSION }}/status > /dev/null; then
               echo "User Service API is up!"
               exit 0

@@ -19,6 +19,7 @@ services:
     networks:
       traveltales_network:
         ipv4_address: 172.20.5.10
+    profiles: ["user_api", "api_gateway"]
 
   redis:
     image: redis:7.4-alpine3.21
@@ -29,6 +30,7 @@ services:
     networks:
       traveltales_network:
         ipv4_address: 172.20.5.11
+    profiles: ["user_api", "api_gateway"]
 
   api_gateway:
     image: rashmithadesilva/traveltales_api_gateway:v1
@@ -45,6 +47,7 @@ services:
     networks:
       traveltales_network:
         ipv4_address: 172.20.5.20
+    profiles: ["api_gateway"]
 
   user_service_api:
     image: rashmithadesilva/traveltales_user_service_api:v1
@@ -61,6 +64,8 @@ services:
     networks:
       traveltales_network:
         ipv4_address: 172.20.5.21
+    profiles: ["user_api"]
+
 
   # frontend:
   #   image: rashmithadesilva/traveltales_frontend:v1

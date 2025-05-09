@@ -20,6 +20,8 @@ router.use('/auth/user', UserRouter);
  *   get:
  *     summary: Get API description
  *     description: Returns a simple description of the API.
+ *     tags:
+ *       - "Util"
  *     responses:
  *       200:
  *         description: A brief API description.
@@ -47,6 +49,8 @@ router.get('/status', (req, res) => {
  *   get:
  *     summary: Get CSRF token
  *     description: Returns a CSRF token to be used for authenticated requests.
+ *     tags:
+ *       - "Util"
  *     responses:
  *       200:
  *         description: Successfully retrieved CSRF token.

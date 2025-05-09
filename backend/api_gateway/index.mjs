@@ -2,18 +2,21 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { setupSwagger } from './src/utils/Swagger.mjs';
 import session from 'express-session';
-import redisSessionStore from './src/stores/SessionStore.mjs';
+import router from './src/routers/Router.mjs';
 import passport from 'passport';
 import './src/strategies/local-strategy.mjs';
-import router from './src/routers/Router.mjs';
+import redisSessionStore from './src/stores/SessionStore.mjs';
 import { LogTypes } from './src/utils/enums/LogTypes.mjs';
 import { log } from './src/utils/ConsoleLog.mjs';
-
+import cookieParser from 'cookie-parser';
+import tinyCsrf from 'tiny-csrf';
+import ErrorResponse from './src/utils/responses/ErrorResponse.mjs';
+import CsrfTokenErrors from './src/utils/errors/CsrfTokenErrors.mjs';
 
 // Setup express app
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3001;
 const API_VERSION = process.env.API_VERSION || 'v1';
 const ENV = process.env.ENV || 'DEV';
 
@@ -24,6 +27,9 @@ if (ENV === "DEV") {
 
 // Middleware
 app.use(express.json());
+
+// Cookie setup
+app.use(cookieParser(process.env.COOKIE_SECRET || 'argon2id19553bnfppLSoqliLt1QIXlA'));
 
 // Session setup
 app.use(session({
@@ -43,6 +49,27 @@ app.use(session({
 // Passport setup
 app.use(passport.initialize());
 app.use(passport.session());
+
+// CSRF Middleware Setup
+app.use(tinyCsrf(
+    process.env.CSRF_SECRET || 'IXlARhJc2mSwXB5yETHH+ZsKslfB03XJ', // CSRF secret
+    ['POST', 'PUT', 'PATCH', 'DELETE'], // HTTP methods to protect
+    // URL paths to exclude from CSRF protection
+    [
+        `/api/${ API_VERSION }/status`,
+        `/api/${ API_VERSION }/auth/login`,
+        `/api/${ API_VERSION }/auth/register`
+    ], 
+    [] // origins like service worker, etc.
+));
+
+// Error handling for CSRF
+app.use((err, req, res, next) => {
+    if (err.message === `Did not get a valid CSRF token for '${req.method} ${req.originalUrl}': ${req.body?._csrf} v. ${req.signedCookies.csrfToken}`) {
+      return ErrorResponse(new Error(CsrfTokenErrors.INVALID_CSRF_TOKEN), res);
+    }
+    next(err);
+});
   
 // Routers setup
 app.use(`/api/${ API_VERSION }/`, router);

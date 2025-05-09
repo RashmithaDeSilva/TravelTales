@@ -1,18 +1,13 @@
 import { Router } from 'express';
 import dotenv from 'dotenv';
-import { validationResult, matchedData, checkSchema } from 'express-validator';
-import StandardResponse from '../utils/responses/StandardResponse.mjs';
-import UserValidationSchema from '../utils/validations/UserValidationSchema.mjs';
-import UserService from '../services/UserService.mjs';
 import isAuthenticated from '../middlewares/UserAuthMiddleware.mjs';
-import CommonErrors from '../utils/errors/CommonErrors.mjs';
 import ErrorResponse from '../utils/responses/ErrorResponse.mjs';
+import StandardResponse from '../utils/responses/StandardResponse.mjs';
 
 
 dotenv.config();
-const ENV = process.env.ENV;
 const router = Router();
-const userService = new UserService();
+const userServiceApi = `http://${ process.env.USER_SERVICE_API_HOST }:${ process.env.USER_SERVICE_API_PORT }/api/${ process.env.USER_SERVICE_API_VERSION }/auth/user`;
 
 
 /**
@@ -92,15 +87,28 @@ const userService = new UserService();
  *       in: cookie
  *       name: connect.sid
  */
-router.get('/info', isAuthenticated, (req, res) => {
-    const user = req.user;
-    user.id = -1;
-    return res.status(200).send(StandardResponse(
-        true,
-        "User info.",
-        user,
-        null
-    ));
+router.get('/info', async (req, res) => {
+    let response;
+    let responseStatus;
+    let responseBody;
+    try {
+        response = await fetch(`${ userServiceApi }/info`, {
+            method: 'GET',
+            headers: {
+                'Cookie': req.headers.cookie || '',
+            },
+        });
+        responseStatus = response.status;
+        responseBody = await response.json();
+        return res.status(responseStatus).send(responseBody);
+
+    } catch (error) {
+        return await ErrorResponse(error, res, '/user/info', {
+            "response": response,
+            "responseStatus": responseStatus,
+            "responseBody": responseBody,
+        });
+    }
 });
 
 /**
@@ -229,35 +237,32 @@ router.get('/info', isAuthenticated, (req, res) => {
  *       in: cookie
  *       name: connect.sid
  */
-router.put('/update', isAuthenticated, [
-    checkSchema({
-        ...UserValidationSchema.firstNameValidation(),
-        ...UserValidationSchema.surnameValidation(),
-        ...UserValidationSchema.emailValidation(),
-        ...UserValidationSchema.contactNumberValidation(),
-    })
-], async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return await ErrorResponse(new Error(CommonErrors.VALIDATION_ERROR), res, '/user/update/', errors);
-    }
-
-    const data = matchedData(req);
-    data.id = req.user.id
+router.put('/update', async (req, res) => {
+    let response;
+    let responseStatus;
+    let responseBody;
 
     try {
-        await userService.updateUser(data);
+        response = await fetch(`${userServiceApi}/update`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cookie': req.headers.cookie || '',
+            },
+            body: JSON.stringify(req.body),
+        });
+        responseStatus = response.status;
+        responseBody = await response.json();
+        return res.status(responseStatus).send(responseBody);
 
     } catch (error) {
-        return await ErrorResponse(error, res, '/user/update/', data);
+        return await ErrorResponse(error, res, '/user/update', {
+            "requestData": req.body,
+            "response": response,
+            "responseStatus": responseStatus,
+            "responseBody": responseBody,
+        });
     }
-
-    return ENV === "DEV" ? res.status(200).send(StandardResponse(
-        true,
-        "User update successfully.",
-        null,
-        null
-    )) : res.sendStatus(204);
 });
 
 /**
@@ -407,34 +412,32 @@ router.put('/update', isAuthenticated, [
  *       in: cookie
  *       name: connect.sid
  */
-router.patch('/changepassword', isAuthenticated, [
-    checkSchema({
-        ...UserValidationSchema.oldPasswordValidation(),
-        ...UserValidationSchema.passwordValidation(),
-        ...UserValidationSchema.confirmPasswordValidation(),
-    })
-], async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return await ErrorResponse(new Error(CommonErrors.VALIDATION_ERROR), res, '/user/changepassword', errors);
-    }
-
-    const data = matchedData(req);
-    data.id = req.user.id
+router.patch('/changepassword', async (req, res) => {
+    let response;
+    let responseStatus;
+    let responseBody;
 
     try {
-        await userService.changePassword(data);
+        response = await fetch(`${userServiceApi}/changepassword`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cookie': req.headers.cookie || '',
+            },
+            body: JSON.stringify(req.body),
+        });
+        responseStatus = response.status;
+        responseBody = await response.json();
+        return res.status(responseStatus).send(responseBody);
 
     } catch (error) {
-        return await ErrorResponse(error, res, '/user/changepassword', data);
+        return await ErrorResponse(error, res, '/user/changepassword', {
+            "requestData": req.body,
+            "response": response,
+            "responseStatus": responseStatus,
+            "responseBody": responseBody,
+        });
     }
-
-    return ENV === "DEV" ? res.status(200).send(StandardResponse(
-        true,
-        "Password change successfully.",
-        null,
-        null
-    )) : res.sendStatus(204);
 });
 
 /**
@@ -512,7 +515,7 @@ router.patch('/changepassword', isAuthenticated, [
  *       in: cookie
  *       name: connect.sid
  */
-router.get('/status', isAuthenticated, async (req, res) => {
+router.get('/status', async (req, res) => {
     return res.status(200).send(StandardResponse(
         true,
         "User status.",
@@ -602,18 +605,27 @@ router.get('/status', isAuthenticated, async (req, res) => {
  *       in: cookie
  *       name: connect.sid
  */
-router.get('/followers&followed', isAuthenticated, async (req, res) => {
+router.get('/followers&followed', async (req, res) => {
+    let response;
+    let responseStatus;
+    let responseBody;
     try {
-        const result = await userService.getFollowersAndFollowed(req.user.id);
-        return res.status(200).send(StandardResponse(
-            true,
-            "Users followers & followed",
-            result,
-            null
-        ));
+        response = await fetch(`${ userServiceApi }/followers&followed`, {
+            method: 'GET',
+            headers: {
+                'Cookie': req.headers.cookie || '',
+            },
+        });
+        responseStatus = response.status;
+        responseBody = await response.json();
+        return res.status(responseStatus).send(responseBody);
 
     } catch (error) {
-        return await ErrorResponse(error, res, '/user/followers&followed');
+        return await ErrorResponse(error, res, '/user/followers&followed', {
+            "response": response,
+            "responseStatus": responseStatus,
+            "responseBody": responseBody,
+        });
     }
 });
 

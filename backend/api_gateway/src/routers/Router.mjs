@@ -3,12 +3,18 @@ import dotenv from 'dotenv';
 import StandardResponse from '../utils/responses/StandardResponse.mjs';
 import CommonErrors from '../utils/errors/CommonErrors.mjs';
 import ErrorResponse from '../utils/responses/ErrorResponse.mjs';
+import UserAuthRouter from './UserAuthRouter.mjs';
 import UserRouter from './UserRouter.mjs';
+import CountryFinderRouter from './CountryFinderRouter.mjs';
+import ToxicityDetectionRouter from './ToxicityDetectionRouter.mjs';
 
 
 dotenv.config();
 const API_VERSION = process.env.API_VERSION || 'v1';
 const router = Router();
+router.use('/auth/', UserAuthRouter);
+router.use('/auth/findecountry', CountryFinderRouter);
+router.use('/auth/toxicitydetection', ToxicityDetectionRouter);
 router.use('/auth/user', UserRouter);
 
 
@@ -43,6 +49,51 @@ router.get('/status', (req, res) => {
 
 /**
  * @swagger
+ * /api/v1/auth/csrf-token:
+ *   get:
+ *     summary: Get CSRF token
+ *     description: Returns a CSRF token to be used for authenticated requests.
+ *     tags:
+ *       - "Util"
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved CSRF token.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   nullable: true
+ *                   example: null
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     CSRF_Token:
+ *                       type: string
+ *                       example: "y7wRzD9n-CqD1VnKRIJvXW1r"
+ *                 error:
+ *                   nullable: true
+ *                   example: null
+ */
+router.get('/auth/csrf-token', (req, res) => {
+    const csrfToken = req.csrfToken();
+    return res.status(200).send(StandardResponse(
+        true,
+        null,
+        {
+            CSRF_Token: csrfToken,
+        },
+        null
+    ));
+});
+
+/**
+ * @swagger
  * /api/v1/{any}:
  *   all:
  *     summary: Invalid endpoint
@@ -72,7 +123,7 @@ router.get('/status', (req, res) => {
  *                   type: string
  *                   example: "Invalid endpoint, redirect to '/api/v1'"
  */
-// router.all("*", (req, res) => {
+// router.all('', (req, res) => {
 //     return ErrorResponse(new Error(CommonErrors.NOT_FOUND), res);
 // });
 

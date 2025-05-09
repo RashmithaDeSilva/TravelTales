@@ -8,7 +8,7 @@ const options = {
     definition: {
         openapi: '3.0.0',
         info: {
-            title: 'TravelTales User Service API Documentation',
+            title: 'TravelTales API Gateway Documentation',
             version: '1.0.0',
             description: 'API documentation for Express API with Mysql runing on Production mode with Swagger in an ECMAScript Module project.'
         },

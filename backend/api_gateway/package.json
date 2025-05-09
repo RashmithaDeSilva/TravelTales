@@ -1,24 +1,27 @@
 {
-  "name": "user_api",
+  "name": "api_gateway",
   "version": "1.0.0",
-  "private": true,
   "description": "",
+  "author": "Lahiru De Silva",
   "main": "index.js",
   "scripts": {
     "start": "cross-env ENV=PROD node index.mjs",
     "dev": "cross-env ENV=DEV nodemon index.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Lahiru De Silva",
-  "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "https://github.com/RashmithaDeSilva/TravelTales.git"
+    "url": "git+https://github.com/RashmithaDeSilva/TravelTales.git"
   },
-  "type": "module",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RashmithaDeSilva/TravelTales/issues"
+  },
+  "homepage": "https://github.com/RashmithaDeSilva/TravelTales#readme",
   "dependencies": {
     "argon2": "^0.43.0",
     "connect-redis": "^8.0.3",
+    "cookie-parser": "^1.4.7",
     "cross-env": "^7.0.3",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
@@ -29,7 +32,8 @@
     "passport-local": "^1.0.0",
     "redis": "^5.0.1",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "tiny-csrf": "^1.1.6"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

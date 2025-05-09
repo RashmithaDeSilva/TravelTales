@@ -1,4 +1,4 @@
-version: '3.9'
+# version: '3.9'
 
 networks:
   traveltales_network:
@@ -10,7 +10,7 @@ networks:
 services:
   mysql:
     image: mysql
-    container_name: main_database
+    container_name: mysql_database
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: 12345
@@ -19,20 +19,39 @@ services:
     networks:
       traveltales_network:
         ipv4_address: 172.20.5.10
+    profiles: ["all", "user_api", "api_gateway"]
 
   redis:
     image: redis:7.4-alpine3.21
-    container_name: session_store
+    container_name: redis_database
     restart: unless-stopped
     ports:
       - "6379:6379"
     networks:
       traveltales_network:
         ipv4_address: 172.20.5.11
+    profiles: ["all", "user_api", "api_gateway"]
+
+  api_gateway:
+    image: rashmithadesilva/traveltales_api_gateway:v1
+    container_name: api_gateway
+    restart: unless-stopped
+    working_dir: /app
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mysql
+      - redis
+    env_file:
+      - ./backend/api_gateway/.env
+    networks:
+      traveltales_network:
+        ipv4_address: 172.20.5.20
+    profiles: ["all", "api_gateway"]
 
   user_service_api:
     image: rashmithadesilva/traveltales_user_service_api:v1
-    container_name: api
+    container_name: user_service_api
     restart: unless-stopped
     working_dir: /app
     ports:
@@ -44,7 +63,9 @@ services:
       - ./backend/user_service_api/.env
     networks:
       traveltales_network:
-        ipv4_address: 172.20.5.20
+        ipv4_address: 172.20.5.21
+    profiles: ["all", "user_api"]
+
 
   # frontend:
   #   image: rashmithadesilva/traveltales_frontend:v1

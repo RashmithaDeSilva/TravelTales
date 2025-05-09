@@ -6,7 +6,6 @@ import StandardResponse from '../utils/responses/StandardResponse.mjs';
 
 
 dotenv.config();
-const ENV = process.env.ENV;
 const router = Router();
 const userServiceApi = `http://${ process.env.USER_SERVICE_API_HOST }:${ process.env.USER_SERVICE_API_PORT }/api/${ process.env.USER_SERVICE_API_VERSION }/auth/user`;
 
@@ -88,7 +87,7 @@ const userServiceApi = `http://${ process.env.USER_SERVICE_API_HOST }:${ process
  *       in: cookie
  *       name: connect.sid
  */
-router.get('/info', isAuthenticated, async (req, res) => {
+router.get('/info', async (req, res) => {
     let response;
     let responseStatus;
     let responseBody;
@@ -238,7 +237,7 @@ router.get('/info', isAuthenticated, async (req, res) => {
  *       in: cookie
  *       name: connect.sid
  */
-router.put('/update', isAuthenticated, async (req, res) => {
+router.put('/update', async (req, res) => {
     let response;
     let responseStatus;
     let responseBody;
@@ -413,7 +412,7 @@ router.put('/update', isAuthenticated, async (req, res) => {
  *       in: cookie
  *       name: connect.sid
  */
-router.patch('/changepassword', isAuthenticated, async (req, res) => {
+router.patch('/changepassword', async (req, res) => {
     let response;
     let responseStatus;
     let responseBody;
@@ -516,7 +515,7 @@ router.patch('/changepassword', isAuthenticated, async (req, res) => {
  *       in: cookie
  *       name: connect.sid
  */
-router.get('/status', isAuthenticated, async (req, res) => {
+router.get('/status', async (req, res) => {
     return res.status(200).send(StandardResponse(
         true,
         "User status.",
@@ -606,7 +605,7 @@ router.get('/status', isAuthenticated, async (req, res) => {
  *       in: cookie
  *       name: connect.sid
  */
-router.get('/followers&followed', isAuthenticated, async (req, res) => {
+router.get('/followers&followed', async (req, res) => {
     let response;
     let responseStatus;
     let responseBody;

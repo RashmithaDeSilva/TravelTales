@@ -18,6 +18,8 @@ router.use('/auth/user', UserRouter);
  *   get:
  *     summary: Get API description
  *     description: Returns a simple description of the API.
+ *     tags:
+ *       - "Util"
  *     responses:
  *       200:
  *         description: A brief API description.

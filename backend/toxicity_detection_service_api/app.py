@@ -125,24 +125,24 @@ def predict_endpoint():
           properties:
             error:
               type: string
-              example: "Description cannot be empty"
+              example: "Description must be a non-empty string"
       415:
-        description: Request content-type must be application/json.
+        description: Content-Type must be application/json.
         schema:
           type: object
           properties:
             error:
               type: string
-              example: "Request content-type must be application/json"
+              example: "Content-Type must be application/json"
     """
     if not request.is_json:
-        return jsonify({"error": "Request content-type must be application/json"}), 415
+        return jsonify({"error": "Content-Type must be application/json"}), 415
 
     data = request.get_json()
 
     description = data.get("description", "")
     if not isinstance(description, str) or not description.strip():
-        return jsonify({"error": "Description cannot be empty"}), 400
+        return jsonify({"error": "Description must be a non-empty string"}), 400
 
     job_id = str(uuid.uuid4())
     with job_lock:

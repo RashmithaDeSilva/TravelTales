@@ -6,6 +6,7 @@ import ErrorResponse from '../utils/responses/ErrorResponse.mjs';
 import UserAuthRouter from './UserAuthRouter.mjs';
 import UserRouter from './UserRouter.mjs';
 import CountryFinderRouter from './CountryFinderRouter.mjs';
+import ToxicityDetectionRouter from './ToxicityDetectionRouter.mjs';
 
 
 dotenv.config();
@@ -13,6 +14,7 @@ const API_VERSION = process.env.API_VERSION || 'v1';
 const router = Router();
 router.use('/auth/', UserAuthRouter);
 router.use('/auth/findecountry', CountryFinderRouter);
+router.use('/auth/toxicitydetection', ToxicityDetectionRouter);
 router.use('/auth/user', UserRouter);
 
 

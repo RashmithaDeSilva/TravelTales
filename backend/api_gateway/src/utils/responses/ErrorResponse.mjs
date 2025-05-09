@@ -3,6 +3,9 @@ import DatabaseErrors from "../errors/DatabaseErrors.mjs"
 import HashErrors from "../errors/HashErrors.mjs";
 import ErrorLogService from "../../services/ErrorLogService.mjs";
 import CommonErrors from "../errors/CommonErrors.mjs";
+import CsrfTokenErrors from '../errors/CsrfTokenErrors.mjs';
+import CountryFinderErrors from '../errors/CountryFinderErrors.mjs';
+import ToxicityDetectionErrors from '../errors/ToxicityDetectionErrors.mjs';
 import { LogTypes } from "../enums/LogTypes.mjs";
 import { log } from "../ConsoleLog.mjs";
 import dotenv from 'dotenv';
@@ -38,6 +41,12 @@ async function ErrorResponse(error, res, location = null, data = null) {
             case DatabaseErrors.INVALID_EMAIL_ADDRESS_OR_PASSWORD:
             case DatabaseErrors.INVALID_EMAIL_ADDRESS:
             case HashErrors.INVALID_OLD_PASSWORD:
+            case CountryFinderErrors.MALFORMED_JSON_BODY:
+            case CountryFinderErrors.INVALID_JSON_STRUCTURE:
+            case CountryFinderErrors.DESCRIPTION_MUST_BE_A_NON_EMPTY_STRING:
+            case ToxicityDetectionErrors.MALFORMED_JSON_BODY:
+            case ToxicityDetectionErrors.INVALID_JSON_STRUCTURE:
+            case ToxicityDetectionErrors.DESCRIPTION_MUST_BE_A_NON_EMPTY_STRING:
                 return res.status(400).send(StandardResponse(
                     false,
                     error.message,
@@ -46,12 +55,20 @@ async function ErrorResponse(error, res, location = null, data = null) {
                 ));
 
             case CommonErrors.AUTHENTICATION_FAILED:
-                    return res.status(401).send(StandardResponse(
-                        false,
-                        error.message,
-                        null,
-                        { redirect: `/api/${ API_VERSION }/auth` }
-                    ));
+                return res.status(401).send(StandardResponse(
+                    false,
+                    error.message,
+                    null,
+                    { redirect: `/api/${ API_VERSION }/auth` }
+                ));
+
+            case CsrfTokenErrors.INVALID_CSRF_TOKEN:
+                return res.status(403).send(StandardResponse(
+                    false,
+                    error.message,
+                    null,
+                    null
+                ));
 
             case CommonErrors.NOT_FOUND:
             case DatabaseErrors.USER_NOT_FOUND:
@@ -60,6 +77,24 @@ async function ErrorResponse(error, res, location = null, data = null) {
                     error.message,
                     null,
                     { redirect: `/api/${ API_VERSION }/auth/login` }
+                ));
+
+            case CountryFinderErrors.JOB_ID_NOT_FOUND:
+            case ToxicityDetectionErrors.JOB_ID_NOT_FOUND:
+                return res.status(404).send(StandardResponse(
+                    false,
+                    error.message,
+                    null,
+                    null
+                ));
+
+            case CountryFinderErrors.CONTENT_TYPE_MUST_BE_APPLICATION_JSON:
+            case ToxicityDetectionErrors.CONTENT_TYPE_MUST_BE_APPLICATION_JSON:
+                return res.status(415).send(StandardResponse(
+                    false,
+                    error.message,
+                    null,
+                    null
                 ));
 
             case HashErrors.HASHING_FAILED:

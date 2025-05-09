@@ -43,7 +43,7 @@ jobs:
           touch .env
       
       - name: Start Docker Compose
-        run: docker compose --profile user_api up -d
+        run: docker compose --profile api_gateway up -d
 
       - name: Wait for API to come up
         run: |
@@ -231,7 +231,7 @@ jobs:
           touch .env
       
       - name: Start Docker Compose
-        run: docker compose --profile api_gateway up -d
+        run: docker compose --profile user_api up -d
 
       - name: Wait for API to come up
         run: |

@@ -1,6 +1,7 @@
 import { getDatabasePool } from '../config/SQLCon.mjs';
 import UserModel from '../models/UserModel.mjs';
 import DatabaseErrors from '../utils/errors/DatabaseErrors.mjs';
+import UserErrors from '../utils/errors/UserError.mjs';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -132,23 +133,19 @@ class UserDAO {
         }
     }
 
-    // Get followers count
-    async getFollowersCount(userId) {
+    // Is id exists
+    async isIdExists(userId) {
         try {
-            const [row] = await pool.query(`SELECT COUNT(*) AS count FROM follows WHERE followed_id = ?`, [userId]);
-            return row[0].count;
-
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    // Get followed count
-    async getFollowedCount(userId) {
-        try {
-            const [row] = await pool.query(`SELECT COUNT(*) AS count FROM follows WHERE follower_id = ?`, [userId]);
-            return row[0].count;
-
+            const result = await pool.query(`
+                SELECT EXISTS(
+                    SELECT 1 FROM users WHERE id = ?
+                ) AS user_exists;
+            `, [userId]);
+            if (result[0][0].user_exists !== 1) {
+                throw new Error(UserErrors.INVALID_USER_ID);
+            }
+            return true;
+            
         } catch (error) {
             throw error;
         }

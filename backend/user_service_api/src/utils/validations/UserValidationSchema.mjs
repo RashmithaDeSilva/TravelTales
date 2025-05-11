@@ -203,6 +203,40 @@ class UserValidationSchema {
             }
         };
     }
+
+    static followerId() {
+        return {
+            follower_id: {
+                notEmpty: {
+                    errorMessage: {
+                        error: "Follower ID cannot be empty!"
+                    }
+                },
+                isInt: {
+                    errorMessage: {
+                        error: "Follower ID must be a Number!"
+                    }
+                }
+            }
+        };
+    }
+
+    static unfollowId() {
+        return {
+            unfollow_id: {
+                notEmpty: {
+                    errorMessage: {
+                        error: "Unfollow ID cannot be empty!"
+                    }
+                },
+                isInt: {
+                    errorMessage: {
+                        error: "Unfollow ID must be a Number!"
+                    }
+                }
+            }
+        };
+    }
 }
 
 export default UserValidationSchema;

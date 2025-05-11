@@ -3,6 +3,7 @@ import DatabaseErrors from "../errors/DatabaseErrors.mjs"
 import HashErrors from "../errors/HashErrors.mjs";
 import ErrorLogService from "../../services/ErrorLogService.mjs";
 import CommonErrors from "../errors/CommonErrors.mjs";
+import UserError from "../errors/UserError.mjs";
 import { LogTypes } from "../enums/LogTypes.mjs";
 import { log } from "../ConsoleLog.mjs";
 import dotenv from 'dotenv';
@@ -38,6 +39,7 @@ async function ErrorResponse(error, res, location = null, data = null) {
             case DatabaseErrors.INVALID_EMAIL_ADDRESS_OR_PASSWORD:
             case DatabaseErrors.INVALID_EMAIL_ADDRESS:
             case HashErrors.INVALID_OLD_PASSWORD:
+            case UserError.INVALID_USER_ID:
                 return res.status(400).send(StandardResponse(
                     false,
                     error.message,

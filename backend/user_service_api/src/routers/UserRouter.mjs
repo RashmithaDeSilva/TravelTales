@@ -44,6 +44,9 @@ const followsService = new FollowsService();
  *                 data:
  *                   type: object
  *                   properties:
+ *                     userName:
+ *                       type: string
+ *                       example: "john_doe"
  *                     firstName:
  *                       type: string
  *                       example: "John"
@@ -123,6 +126,9 @@ router.get('/info', isAuthenticated, (req, res) => {
  *           schema:
  *             type: object
  *             properties:
+ *               user_name:
+ *                 type: string
+ *                 example: "john_doe"
  *               first_name:
  *                 type: string
  *                 example: "John"
@@ -233,6 +239,7 @@ router.get('/info', isAuthenticated, (req, res) => {
  */
 router.put('/update', isAuthenticated, [
     checkSchema({
+        ...UserValidationSchema.userNameValidation(),
         ...UserValidationSchema.firstNameValidation(),
         ...UserValidationSchema.surnameValidation(),
         ...UserValidationSchema.emailValidation(),

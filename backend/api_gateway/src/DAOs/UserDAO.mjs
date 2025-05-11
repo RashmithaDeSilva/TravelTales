@@ -21,12 +21,19 @@ class UserDAO {
         }
     }
 
-    // Check id is exist
-    async checkIdIsExist(id) {
+    // Is id exists
+    async isIdExists(userId) {
         try {
-            const [row] = await pool.query("SELECT id FROM users WHERE id = ?", [id]);
-            return row.length > 0;
-
+            const result = await pool.query(`
+                SELECT EXISTS(
+                    SELECT 1 FROM users WHERE id = ?
+                ) AS user_exists;
+            `, [userId]);
+            if (result[0][0].user_exists !== 1) {
+                throw new Error(UserErrors.INVALID_USER_ID);
+            }
+            return true;
+            
         } catch (error) {
             throw error;
         }
@@ -53,13 +60,14 @@ class UserDAO {
             
             const [row] = await pool.query(`SELECT * FROM users WHERE email = ?`, [email]);
             return new UserModel(
+                row[0].user_name,
                 row[0].first_name, 
                 row[0].surname,
                 row[0].email,
                 row[0].contact_number,
                 row[0].password_hash,
                 row[0].id,
-                row[0].verify,
+                row[0].email_verify,
             );
 
         } catch (error) {
@@ -75,13 +83,14 @@ class UserDAO {
             
             const [result] = await pool.query(`
                 INSERT INTO users (
+                    user_name,
                     first_name, 
                     surname, 
                     email, 
                     contact_number, 
                     password_hash
-                ) values (?, ?, ?, ?, ?)
-            `, [user.firstName, user.surname, user.email, user.contactNumber, user.passwordHash]);
+                ) values (?, ?, ?, ?, ?, ?)
+            `, [user.userName, user.firstName, user.surname, user.email, user.contactNumber, user.passwordHash]);
 
             const userId = process.env.ENV === "PROD" ? 
             result.insertId : await this.getUserIdByEmail(user.email);
@@ -97,13 +106,14 @@ class UserDAO {
         try {
             const [row] = await pool.query(`SELECT * FROM users WHERE id = ?`, [id]);
             return row.length === 0 ? null : new UserModel(
+                row[0].user_name,
                 row[0].first_name, 
                 row[0].surname,
                 row[0].email,
                 row[0].contact_number,
                 row[0].password_hash,
                 row[0].id,
-                row[0].verify,
+                row[0].email_verify,
             );
 
         } catch (error) {

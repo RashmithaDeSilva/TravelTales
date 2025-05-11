@@ -37,6 +37,9 @@ const userServiceApi = `http://${ process.env.USER_SERVICE_API_HOST }:${ process
  *                 data:
  *                   type: object
  *                   properties:
+ *                     userName:
+ *                       type: string
+ *                       example: "john_doe"
  *                     firstName:
  *                       type: string
  *                       example: "John"
@@ -129,6 +132,9 @@ router.get('/info', async (req, res) => {
  *           schema:
  *             type: object
  *             properties:
+ *               user_name:
+ *                 type: string
+ *                 example: "john_doe"
  *               first_name:
  *                 type: string
  *                 example: "John"

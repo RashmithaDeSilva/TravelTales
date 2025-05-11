@@ -19,6 +19,7 @@ class UserService {
         try {
             // Create user model
             const user = new UserModel(
+                data.user_name,
                 data.first_name,
                 data.surname,
                 data.email,

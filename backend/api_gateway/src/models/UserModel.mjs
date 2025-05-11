@@ -1,6 +1,7 @@
 class UserModel {
 
-    constructor (firstName, surname, email,  contactNumber, passwordHash = null, id = null, email_verify = false) {
+    constructor (userName, firstName, surname, email,  contactNumber, passwordHash = null, id = null, email_verify = false) {
+        this.userName = userName;
         this.firstName = firstName;
         this.surname = surname;
         this.email = email;
@@ -11,13 +12,13 @@ class UserModel {
     }
 
     // Creating request model with passwordHash
-    static getRequestUserModel(firstName, surname, email, contactNumber, passwordHash) {
-        return new UserModel(firstName, surname, email, contactNumber, passwordHash);
+    static getRequestUserModel(userName, firstName, surname, email, contactNumber, passwordHash) {
+        return new UserModel(userName, firstName, surname, email, contactNumber, passwordHash);
     }
 
     // Creating response model with id
-    static getResponseUserModel(firstName, surname, email, contactNumber, id) {
-        return new UserModel(firstName, surname, email, contactNumber, null, id);
+    static getResponseUserModel(userName, firstName, surname, email, contactNumber, id) {
+        return new UserModel(userName, firstName, surname, email, contactNumber, null, id);
     }
 }
 

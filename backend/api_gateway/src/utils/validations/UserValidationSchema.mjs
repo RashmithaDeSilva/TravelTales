@@ -1,6 +1,8 @@
 import dotenv from "dotenv";
 
 dotenv.config();
+const USER_NAME_MIN_CHARACTERS_SIZE = process.env.USER_NAME_MIN_CHARACTERS_SIZE || 3;
+const USER_NAME_MAX_CHARACTERS_SIZE = process.env.USER_NAME_MAX_CHARACTERS_SIZE || 50;
 const USER_FIRST_NAME_MIN_CHARACTERS_SIZE = process.env.USER_FIRST_NAME_MIN_CHARACTERS_SIZE || 3;
 const USER_FIRST_NAME_MAX_CHARACTERS_SIZE = process.env.USER_FIRST_NAME_MAX_CHARACTERS_SIZE || 50;
 const USER_SURNAME_MIN_CHARACTERS_SIZE = process.env.USER_SURNAME_MIN_CHARACTERS_SIZE || 3;
@@ -14,6 +16,38 @@ const USER_PASSWORD_MIN_CHARACTERS_SIZE = process.env.USER_PASSWORD_MIN_CHARACTE
 
 class UserValidationSchema {
     constructor() {}
+
+    static userNameValidation() {
+        return {
+            user_name: {
+                notEmpty: {
+                    errorMessage: {
+                        error: "User name can't be empty!"
+                    }
+                },
+                isString: {
+                    errorMessage: {
+                        error: "User name must be a string!"
+                    }
+                },
+                matches: {
+                    options: [/^[A-Za-z0-9._-]+$/], // Allows letters, numbers, dot, underscore, and dash
+                    errorMessage: {
+                        error: "User name can only contain letters, numbers, dots (.), underscores (_) and dashes (-), without spaces!"
+                    }
+                },
+                isLength: {
+                    options: {
+                        min: parseInt(USER_NAME_MIN_CHARACTERS_SIZE),
+                        max: parseInt(USER_NAME_MAX_CHARACTERS_SIZE)
+                    },
+                    errorMessage: {
+                        error: `User name must be between ${ USER_NAME_MIN_CHARACTERS_SIZE } and ${ USER_NAME_MAX_CHARACTERS_SIZE } characters!`
+                    }
+                }
+            }
+        };
+    }
 
     static firstNameValidation() {
         return {
@@ -198,6 +232,40 @@ class UserValidationSchema {
                     },
                     errorMessage: {
                         error: `Old password must be at least ${ USER_PASSWORD_MIN_CHARACTERS_SIZE } characters!`
+                    }
+                }
+            }
+        };
+    }
+
+    static followerId() {
+        return {
+            follower_id: {
+                notEmpty: {
+                    errorMessage: {
+                        error: "Follower ID cannot be empty!"
+                    }
+                },
+                isInt: {
+                    errorMessage: {
+                        error: "Follower ID must be a Number!"
+                    }
+                }
+            }
+        };
+    }
+
+    static unfollowId() {
+        return {
+            unfollow_id: {
+                notEmpty: {
+                    errorMessage: {
+                        error: "Unfollow ID cannot be empty!"
+                    }
+                },
+                isInt: {
+                    errorMessage: {
+                        error: "Unfollow ID must be a Number!"
                     }
                 }
             }

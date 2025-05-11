@@ -175,6 +175,7 @@ router.post('/login', [
  *           schema:
  *             type: object
  *             required:
+ *               - user_name
  *               - first_name
  *               - surname
  *               - email
@@ -182,6 +183,10 @@ router.post('/login', [
  *               - password
  *               - confirm_password
  *             properties:
+ *               user_name:
+ *                 type: string
+ *                 description: The user name of the user.
+ *                 example: user_name
  *               first_name:
  *                 type: string
  *                 description: The first name of the user.
@@ -272,6 +277,7 @@ router.post('/login', [
  */
 router.post('/register', [
     checkSchema({
+        ...UserValidationSchema.userNameValidation(),
         ...UserValidationSchema.firstNameValidation(),
         ...UserValidationSchema.surnameValidation(),
         ...UserValidationSchema.emailValidation(),

@@ -20,6 +20,7 @@ class UserService {
             
             // Create user model
             const user = UserModel.getRequestUserModel(
+                data.user_name,
                 data.first_name,
                 data.surname,
                 data.email,

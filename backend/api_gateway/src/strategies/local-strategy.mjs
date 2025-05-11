@@ -20,6 +20,7 @@ passport.deserializeUser(async (sessionData, done) => {
         const user = await userService.getUserById(sessionData.id);
 
         const responseModel = UserModel.getResponseUserModel(
+            user.userName,
             user.firstName, 
             user.surname,
             user.email,

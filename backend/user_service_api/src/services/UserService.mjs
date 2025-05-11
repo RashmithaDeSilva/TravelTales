@@ -75,17 +75,11 @@ class UserService {
         }
     }
 
-    // Get followers & followed
-    async getFollowersAndFollowed(userId) {
+    // Is id exists
+    async isIdExists(userId) {
         try {
-            const followersCount = await this.userDAO.getFollowersCount(userId);
-            const followedCount = await this.userDAO.getFollowedCount(userId);
-
-            return {
-                "followers": followersCount,
-                "followed": followedCount,
-            }
-
+            return await this.userDAO.isIdExists(userId);
+            
         } catch (error) {
             throw error;
         }

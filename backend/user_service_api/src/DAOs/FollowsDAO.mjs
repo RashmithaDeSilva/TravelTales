@@ -84,6 +84,25 @@ class FollowsDAO {
             throw error;
         }
     }
+
+    // Unfollow user
+    async unfollowUser(follower_id, unfollow_id) {
+        try {
+            const isFollowing = await this.isFollowing(follower_id, unfollow_id);
+            if (isFollowing) {
+                const result = await pool.query(`
+                    DELETE FROM follows
+                    WHERE follower_id = ? AND followed_id = ?;
+                `, [follower_id, unfollow_id]);
+                console.log(result);
+                return result[0].affectedRows === 1
+            }
+            throw new Error(FollowsError.YOU_ARE_NOT_FOLLOWING_THIS_PERSON);
+            
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 export default FollowsDAO;

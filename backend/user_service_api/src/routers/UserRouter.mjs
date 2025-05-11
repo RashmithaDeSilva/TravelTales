@@ -771,8 +771,156 @@ router.post('/follow', isAuthenticated, [
     }
 })
 
-router.patch('/unfollow', isAuthenticated, async (req, res) => {
-    
+/**
+ * @swagger
+ * /api/v1/auth/user/unfollow:
+ *   delete:
+ *     summary: Unfollow a user
+ *     description: Authenticated user unfollows another user by their follower_id.
+ *     tags:
+ *       - User
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - unfollow_id
+ *             properties:
+ *               unfollow_id:
+ *                 type: integer
+ *                 example: 123
+ *                 description: The ID of the user to unfollow.
+ *     responses:
+ *       200:
+ *         description: Successfully unfollow user.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Successfully unfollowed user
+ *                 data:
+ *                   type: object
+ *                   example: null
+ *                 error:
+ *                   type: object
+ *                   example: null
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Validation error
+ *                 data:
+ *                   type: object
+ *                   example: null
+ *                 errors:
+ *                   type: object
+ *                   properties:
+ *                     errors:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           type:
+ *                             type: string
+ *                             example: field
+ *                           msg:
+ *                             type: object
+ *                             properties:
+ *                               error:
+ *                                 type: string
+ *                                 example: Follower ID cannot be empty!
+ *                           path:
+ *                             type: string
+ *                             example: follower_id
+ *                           location:
+ *                             type: string
+ *                             example: body
+ *       401:
+ *         description: Unauthorized - User is not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Authentication failed
+ *                 data:
+ *                   type: "null"
+ *                   example: null
+ *                 errors:
+ *                   type: object
+ *                   example: { "redirect": "/api/v1/auth" }
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error.
+ *                 data:
+ *                   type: "null"
+ *                   example: null
+ *                 errors:
+ *                   type: string
+ *                   example: null
+ * components:
+ *   securitySchemes:
+ *     cookieAuth:
+ *       type: apiKey
+ *       in: cookie
+ *       name: connect.sid
+ */
+router.delete('/unfollow', isAuthenticated, [
+    checkSchema({
+        ...UserValidationSchema.unfollowId(),
+    })
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return await ErrorResponse(new Error(CommonErrors.VALIDATION_ERROR), res, '/user/unfollow', errors);
+    }
+    const data = matchedData(req);
+
+    try {
+        await followsService.unfollowUser(req.user.id, data.unfollow_id);
+        return res.status(200).send(StandardResponse(
+            true,
+            "Successfully unfollowed user",
+            null,
+            null
+        ));
+        
+    } catch (error) {
+        return await ErrorResponse(error, res, '/user/unfollow');
+    }
 })
 
 export default router;

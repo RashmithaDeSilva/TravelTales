@@ -223,7 +223,7 @@ class UserValidationSchema {
 
     static unfollowId() {
         return {
-            follower_id: {
+            unfollow_id: {
                 notEmpty: {
                     errorMessage: {
                         error: "Unfollow ID cannot be empty!"

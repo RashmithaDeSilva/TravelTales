@@ -94,7 +94,6 @@ class FollowsDAO {
                     DELETE FROM follows
                     WHERE follower_id = ? AND followed_id = ?;
                 `, [follower_id, unfollow_id]);
-                console.log(result);
                 return result[0].affectedRows === 1
             }
             throw new Error(FollowsError.YOU_ARE_NOT_FOLLOWING_THIS_PERSON);

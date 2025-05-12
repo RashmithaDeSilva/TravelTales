@@ -90,7 +90,7 @@ const userServiceApi = `http://${ process.env.USER_SERVICE_API_HOST }:${ process
  *       in: cookie
  *       name: connect.sid
  */
-router.get('/info', async (req, res) => {
+router.get('/info', isAuthenticated, async (req, res) => {
     let response;
     let responseStatus;
     let responseBody;
@@ -98,6 +98,7 @@ router.get('/info', async (req, res) => {
         response = await fetch(`${ userServiceApi }/info`, {
             method: 'GET',
             headers: {
+                'Authorization': `Bearer ${ req.user.jwt }`,
                 'Cookie': req.headers.cookie || '',
             },
         });
@@ -243,7 +244,7 @@ router.get('/info', async (req, res) => {
  *       in: cookie
  *       name: connect.sid
  */
-router.put('/update', async (req, res) => {
+router.put('/update', isAuthenticated, async (req, res) => {
     let response;
     let responseStatus;
     let responseBody;
@@ -252,6 +253,7 @@ router.put('/update', async (req, res) => {
         response = await fetch(`${userServiceApi}/update`, {
             method: 'PUT',
             headers: {
+                'Authorization': `Bearer ${ req.user.jwt }`,
                 'Content-Type': 'application/json',
                 'Cookie': req.headers.cookie || '',
             },
@@ -418,7 +420,7 @@ router.put('/update', async (req, res) => {
  *       in: cookie
  *       name: connect.sid
  */
-router.patch('/changepassword', async (req, res) => {
+router.patch('/changepassword', isAuthenticated, async (req, res) => {
     let response;
     let responseStatus;
     let responseBody;
@@ -427,6 +429,7 @@ router.patch('/changepassword', async (req, res) => {
         response = await fetch(`${userServiceApi}/changepassword`, {
             method: 'PATCH',
             headers: {
+                'Authorization': `Bearer ${ req.user.jwt }`,
                 'Content-Type': 'application/json',
                 'Cookie': req.headers.cookie || '',
             },
@@ -521,7 +524,7 @@ router.patch('/changepassword', async (req, res) => {
  *       in: cookie
  *       name: connect.sid
  */
-router.get('/status', async (req, res) => {
+router.get('/status', isAuthenticated, async (req, res) => {
     return res.status(200).send(StandardResponse(
         true,
         "User status.",
@@ -611,7 +614,7 @@ router.get('/status', async (req, res) => {
  *       in: cookie
  *       name: connect.sid
  */
-router.get('/followers&followed', async (req, res) => {
+router.get('/followers&followed', isAuthenticated, async (req, res) => {
     let response;
     let responseStatus;
     let responseBody;
@@ -619,6 +622,7 @@ router.get('/followers&followed', async (req, res) => {
         response = await fetch(`${ userServiceApi }/followers&followed`, {
             method: 'GET',
             headers: {
+                'Authorization': `Bearer ${ req.user.jwt }`,
                 'Cookie': req.headers.cookie || '',
             },
         });
@@ -766,7 +770,7 @@ router.get('/followers&followed', async (req, res) => {
  *       in: cookie
  *       name: connect.sid
  */
-router.post('/follow', async (req, res) => {
+router.post('/follow', isAuthenticated, async (req, res) => {
     let response;
     let responseStatus;
     let responseBody;
@@ -774,6 +778,7 @@ router.post('/follow', async (req, res) => {
         response = await fetch(`${ userServiceApi }/follow`, {
             method: 'POST',
             headers: {
+                'Authorization': `Bearer ${ req.user.jwt }`,
                 'Content-Type': 'application/json',
                 'Cookie': req.headers.cookie || '',
             },
@@ -924,7 +929,7 @@ router.post('/follow', async (req, res) => {
  *       in: cookie
  *       name: connect.sid
  */
-router.delete('/unfollow', async (req, res) => {
+router.delete('/unfollow', isAuthenticated, async (req, res) => {
     let response;
     let responseStatus;
     let responseBody;
@@ -932,6 +937,7 @@ router.delete('/unfollow', async (req, res) => {
         response = await fetch(`${ userServiceApi }/unfollow`, {
             method: 'DELETE',
             headers: {
+                'Authorization': `Bearer ${ req.user.jwt }`,
                 'Content-Type': 'application/json',
                 'Cookie': req.headers.cookie || '',
             },

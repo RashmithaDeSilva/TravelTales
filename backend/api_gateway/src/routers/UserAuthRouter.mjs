@@ -10,10 +10,15 @@ import CommonErrors from '../utils/errors/CommonErrors.mjs';
 import ErrorResponse from '../utils/responses/ErrorResponse.mjs';
 import isAuthenticated from '../middlewares/UserAuthMiddleware.mjs';
 import { promisify } from 'util';
+import jwt from 'jsonwebtoken';
+
 
 dotenv.config();
 const router = Router();
 const userService = new UserService();
+const JWT_SECRET = process.env.JWT_SECRET || '5iLt1QIXlARhJc2mSwXB5yETHH+ZsKslfB03XJpntC';
+const JWT_EX_TIME = process.env.JWT_EX_TIME || '24h';
+
 
 /**
  * @swagger
@@ -144,6 +149,14 @@ router.post('/login', [
             if (!user) {
                 return await ErrorResponse(new Error(DatabaseErrors.INVALID_EMAIL_ADDRESS_OR_PASSWORD), res);
             }
+
+            // bind JWT token with pasport session
+            const token = jwt.sign(
+                { id: user.id },
+                JWT_SECRET,
+                { expiresIn: JWT_EX_TIME }
+            );
+            user.jwt = token;
 
             req.logIn(user, async (loginErr) => {
                 if (loginErr) {

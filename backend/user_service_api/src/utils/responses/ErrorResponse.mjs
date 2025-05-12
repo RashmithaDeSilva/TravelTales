@@ -1,5 +1,5 @@
 import StandardResponse from "./StandardResponse.mjs";
-import DatabaseErrors from "../errors/DatabaseErrors.mjs"
+import DatabaseErrors from "../errors/DatabaseErrors.mjs";
 import HashErrors from "../errors/HashErrors.mjs";
 import ErrorLogService from "../../services/ErrorLogService.mjs";
 import CommonErrors from "../errors/CommonErrors.mjs";

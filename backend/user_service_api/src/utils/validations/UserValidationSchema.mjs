@@ -17,6 +17,23 @@ const USER_PASSWORD_MIN_CHARACTERS_SIZE = process.env.USER_PASSWORD_MIN_CHARACTE
 class UserValidationSchema {
     constructor() {}
 
+    static userId() {
+        return {
+            user_id: {
+                notEmpty: {
+                    errorMessage: {
+                        error: "User ID cannot be empty!"
+                    }
+                },
+                isInt: {
+                    errorMessage: {
+                        error: "User ID must be a Number!"
+                    }
+                }
+            }
+        };
+    }
+
     static userNameValidation() {
         return {
             user_name: {

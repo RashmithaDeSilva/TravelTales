@@ -11,6 +11,7 @@ const userService = new UserService();
 passport.serializeUser((user, done) => {
     done(null, {
         "id": user.id,
+        "jwt": user.jwt,
     });
 });
 
@@ -28,6 +29,7 @@ passport.deserializeUser(async (sessionData, done) => {
             user.id
         );
         if (!user) throw new Error(DatabaseErrors.USER_NOT_FOUND);
+        responseModel.jwt = sessionData.jwt;
         done(null, responseModel);
 
     } catch (error) {

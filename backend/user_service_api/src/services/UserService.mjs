@@ -14,6 +14,17 @@ class UserService {
         this.userDAO = new UserDAO();
     }
 
+    // Is id exists
+    async isIdExists(userId) {
+        try {
+            const result = await this.userDAO.isIdExists(userId);
+            return result;
+            
+        } catch (error) {
+            throw error;
+        }
+    }
+
     // Update user
     async updateUser(data) {
         try {
@@ -51,35 +62,12 @@ class UserService {
         }
     }
 
-    // Authenticat user
-    async authenticateUser(email, password) {
-        try {
-            const user = await this.userDAO.getUserByEmail(email);
-            const passwordVerify = await verify(user.passwordHash, password);
-            if (!passwordVerify) throw new Error(DatabaseErrors.INVALID_EMAIL_ADDRESS_OR_PASSWORD);
-            return user;
-            
-        } catch (error) {
-            throw error;
-        }
-    }
-
     // Get user by user id
     async getUserById(id) {
         try {
             const user = await this.userDAO.getUserById(id);
             if (!user) throw new Error(DatabaseErrors.USER_NOT_FOUND);
             return user;
-            
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    // Is id exists
-    async isIdExists(userId) {
-        try {
-            return await this.userDAO.isIdExists(userId);
             
         } catch (error) {
             throw error;

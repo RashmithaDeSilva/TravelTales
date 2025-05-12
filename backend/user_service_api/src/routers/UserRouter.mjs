@@ -26,7 +26,7 @@ const followsService = new FollowsService();
  *     tags:
  *       - "User"
  *     security:
- *       - cookieAuth: []
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: "Successfully retrieved user status"
@@ -92,14 +92,13 @@ const followsService = new FollowsService();
  *                   example: {"redirect":"/api/v1/auth"}
  * components:
  *   securitySchemes:
- *     cookieAuth:
- *       type: apiKey
- *       in: cookie
- *       name: connect.sid
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  */
-router.get('/info', isAuthenticated, (req, res) => {
-    const user = req.user;
-    user.id = -1;
+router.get('/info', isAuthenticated, async (req, res) => {
+    const user = await userService.getUserById(req.user.id);
     return res.status(200).send(StandardResponse(
         true,
         "User info.",
@@ -117,7 +116,7 @@ router.get('/info', isAuthenticated, (req, res) => {
  *     tags:
  *       - "User"
  *     security:
- *       - cookieAuth: []
+ *       - bearerAuth: []
  *     requestBody:
  *       description: "User data to be updated."
  *       required: true
@@ -232,10 +231,10 @@ router.get('/info', isAuthenticated, (req, res) => {
  *                   example: "Internal Server Error"
  * components:
  *   securitySchemes:
- *     cookieAuth:
- *       type: apiKey
- *       in: cookie
- *       name: connect.sid
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  */
 router.put('/update', isAuthenticated, [
     checkSchema({
@@ -278,7 +277,7 @@ router.put('/update', isAuthenticated, [
  *     tags:
  *       - "User"
  *     security:
- *       - cookieAuth: []
+ *       - bearerAuth: []
  *     requestBody:
  *       description: "User password change request."
  *       required: true
@@ -411,10 +410,10 @@ router.put('/update', isAuthenticated, [
  * 
  * components:
  *   securitySchemes:
- *     cookieAuth:
- *       type: apiKey
- *       in: cookie
- *       name: connect.sid
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  */
 router.patch('/changepassword', isAuthenticated, [
     checkSchema({
@@ -455,7 +454,7 @@ router.patch('/changepassword', isAuthenticated, [
  *     tags:
  *       - User
  *     security:
- *       - cookieAuth: []
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: User is authenticated
@@ -516,10 +515,10 @@ router.patch('/changepassword', isAuthenticated, [
  *                   example: null
  * components:
  *   securitySchemes:
- *     cookieAuth:
- *       type: apiKey
- *       in: cookie
- *       name: connect.sid
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  */
 router.get('/status', isAuthenticated, async (req, res) => {
     return res.status(200).send(StandardResponse(
@@ -539,7 +538,7 @@ router.get('/status', isAuthenticated, async (req, res) => {
  *     tags:
  *       - User
  *     security:
- *       - cookieAuth: []
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Successfully retrieved followers and followed counts
@@ -606,10 +605,10 @@ router.get('/status', isAuthenticated, async (req, res) => {
  *                   example: null
  * components:
  *   securitySchemes:
- *     cookieAuth:
- *       type: apiKey
- *       in: cookie
- *       name: connect.sid
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  */
 router.get('/followers&followed', isAuthenticated, async (req, res) => {
     try {
@@ -748,10 +747,10 @@ router.get('/followers&followed', isAuthenticated, async (req, res) => {
  *                   example: null
  * components:
  *   securitySchemes:
- *     cookieAuth:
- *       type: apiKey
- *       in: cookie
- *       name: connect.sid
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  */
 router.post('/follow', isAuthenticated, [
     checkSchema({
@@ -900,10 +899,10 @@ router.post('/follow', isAuthenticated, [
  *                   example: null
  * components:
  *   securitySchemes:
- *     cookieAuth:
- *       type: apiKey
- *       in: cookie
- *       name: connect.sid
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  */
 router.delete('/unfollow', isAuthenticated, [
     checkSchema({
@@ -929,5 +928,6 @@ router.delete('/unfollow', isAuthenticated, [
         return await ErrorResponse(error, res, '/user/unfollow');
     }
 })
+
 
 export default router;

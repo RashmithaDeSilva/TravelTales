@@ -1,9 +1,7 @@
 import StandardResponse from "./StandardResponse.mjs";
 import DatabaseErrors from "../errors/DatabaseErrors.mjs";
-import HashErrors from "../errors/HashErrors.mjs";
 import ErrorLogService from "../../services/ErrorLogService.mjs";
 import CommonErrors from "../errors/CommonErrors.mjs";
-import UserError from "../errors/UserError.mjs";
 import { LogTypes } from "../enums/LogTypes.mjs";
 import { log } from "../ConsoleLog.mjs";
 import dotenv from 'dotenv';
@@ -35,17 +33,17 @@ async function ErrorResponse(error, res, location = null, data = null) {
                     data
                 ));
 
-            case DatabaseErrors.EMAIL_ALREADY_EXISTS:
-            case DatabaseErrors.INVALID_EMAIL_ADDRESS_OR_PASSWORD:
-            case DatabaseErrors.INVALID_EMAIL_ADDRESS:
-            case HashErrors.INVALID_OLD_PASSWORD:
-            case UserError.INVALID_USER_ID:
-                return res.status(400).send(StandardResponse(
-                    false,
-                    error.message,
-                    null,
-                    null 
-                ));
+            // case DatabaseErrors.EMAIL_ALREADY_EXISTS:
+            // case DatabaseErrors.INVALID_EMAIL_ADDRESS_OR_PASSWORD:
+            // case DatabaseErrors.INVALID_EMAIL_ADDRESS:
+            // case HashErrors.INVALID_OLD_PASSWORD:
+            // case UserError.INVALID_USER_ID:
+            //     return res.status(400).send(StandardResponse(
+            //         false,
+            //         error.message,
+            //         null,
+            //         null 
+            //     ));
 
             case CommonErrors.AUTHENTICATION_FAILED:
                     return res.status(401).send(StandardResponse(
@@ -56,22 +54,11 @@ async function ErrorResponse(error, res, location = null, data = null) {
                     ));
 
             case CommonErrors.NOT_FOUND:
-            case DatabaseErrors.USER_NOT_FOUND:
                 return res.status(404).send(StandardResponse(
                     false,
                     error.message,
                     null,
                     { redirect: `/api/${ API_VERSION }/auth/login` }
-                ));
-
-            case HashErrors.HASHING_FAILED:
-            case HashErrors.HASH_VERIFICATION_FAILED:
-                await logError(location, error, data);
-                return res.status(500).send(StandardResponse(
-                    false,
-                    CommonErrors.INTERNAL_SERVER_ERROR,
-                    null,
-                    ENV === "DEV" ? error.message : null // Only expose internal error messages in DEV
                 ));
     
             default:

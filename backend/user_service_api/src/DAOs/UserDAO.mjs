@@ -11,17 +11,6 @@ class UserDAO {
     constructor () {
     }
 
-    // Check email is exist
-    async checkEmailIsExist(email) {
-        try {
-            const [row] = await pool.query("SELECT email FROM users WHERE email = ?", [email]);
-            return row.length > 0;
-
-        } catch (error) {
-            throw error;
-        }
-    }
-
     // Is id exists
     async isIdExists(userId) {
         try {
@@ -39,7 +28,7 @@ class UserDAO {
             throw error;
         }
     }
-
+    
     // Get user ID using email
     async getUserIdByEmail(email) {
         try {
@@ -67,42 +56,17 @@ class UserDAO {
         }
     }
 
-    // Get user using email
-    async getUserByEmail(email) {
-        try {
-            // Check email is exist
-            if (!await this.checkEmailIsExist(email)) throw new Error(DatabaseErrors.INVALID_EMAIL_ADDRESS);
-            
-            const [row] = await pool.query(`SELECT * FROM users WHERE email = ?`, [email]);
-            return new UserModel(
-                row[0].user_name,
-                row[0].first_name, 
-                row[0].surname,
-                row[0].email,
-                row[0].contact_number,
-                row[0].password_hash,
-                row[0].id,
-                row[0].email_verify,
-            );
-
-        } catch (error) {
-            throw error;
-        }
-    }
-
     // Get user using id
     async getUserById(id) {
         try {
             const [row] = await pool.query(`SELECT * FROM users WHERE id = ?`, [id]);
-            return row.length === 0 ? null : new UserModel(
+            return row.length === 0 ? null : UserModel.getResponseUserModel(
                 row[0].user_name,
                 row[0].first_name, 
                 row[0].surname,
                 row[0].email,
                 row[0].contact_number,
-                row[0].password_hash,
                 row[0].id,
-                row[0].email_verify,
             );
 
         } catch (error) {

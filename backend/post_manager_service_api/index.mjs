@@ -9,7 +9,7 @@ import { log } from './src/utils/ConsoleLog.mjs';
 // Setup express app
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3003;
 const API_VERSION = process.env.API_VERSION || 'v1';
 const ENV = process.env.ENV || 'DEV';
 
@@ -20,7 +20,7 @@ if (ENV === "DEV") {
 
 // Middleware
 app.use(express.json());
-
+  
 // Routers setup
 app.use(`/api/${ API_VERSION }/`, router);
 

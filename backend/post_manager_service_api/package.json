@@ -1,29 +1,36 @@
 {
-  "name": "user_api",
+  "name": "post_manager_service_api",
   "version": "1.0.0",
-  "private": true,
   "description": "",
+  "author": "Lahiru De Silva",
   "main": "index.js",
   "scripts": {
     "start": "cross-env ENV=PROD node index.mjs",
     "dev": "cross-env ENV=DEV nodemon index.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Lahiru De Silva",
-  "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "https://github.com/RashmithaDeSilva/TravelTales.git"
+    "url": "git+https://github.com/RashmithaDeSilva/TravelTales.git"
   },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RashmithaDeSilva/TravelTales/issues"
+  },
+  "homepage": "https://github.com/RashmithaDeSilva/TravelTales#readme",
   "type": "module",
   "dependencies": {
-    "argon2": "^0.43.0",
+    "connect-redis": "^8.0.3",
+    "cookie-parser": "^1.4.7",
     "cross-env": "^7.0.3",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "express-session": "^1.18.1",
     "express-validator": "^7.2.1",
-    "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.14.1",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "redis": "^5.0.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   },

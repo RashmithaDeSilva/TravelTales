@@ -18,6 +18,7 @@
     "url": "https://github.com/RashmithaDeSilva/TravelTales/issues"
   },
   "homepage": "https://github.com/RashmithaDeSilva/TravelTales#readme",
+  "type": "module",
   "dependencies": {
     "argon2": "^0.43.0",
     "connect-redis": "^8.0.3",
@@ -27,6 +28,7 @@
     "express": "^5.1.0",
     "express-session": "^1.18.1",
     "express-validator": "^7.2.1",
+    "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.14.1",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",

@@ -124,12 +124,22 @@ router.post('/predict', isAuthenticated, async (req, res) => {
         response = await fetch(`${ toxicityDetectionServiceApi }/predict`, {
             method: 'POST',
             headers: {
+                'Authorization': `Bearer ${ req.user.jwt }`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(req.body),
         });
         responseStatus = response.status;
         responseBody = await response.json();
+
+        if (responseStatus === 200) {
+            return res.status(responseStatus).send(StandardResponse(
+                true,
+                "Prediction job submitted successfully",
+                responseBody,
+                null
+            ));
+        }
 
         if (responseStatus === 415) {
             throw new Error(ToxicityDetectionErrors.CONTENT_TYPE_MUST_BE_APPLICATION_JSON);
@@ -142,14 +152,17 @@ router.post('/predict', isAuthenticated, async (req, res) => {
 
         } else if (responseStatus === 400 && responseBody?.error === "Description must be a non-empty string") {
             throw new Error(ToxicityDetectionErrors.DESCRIPTION_MUST_BE_A_NON_EMPTY_STRING);
-        }
 
-        return res.status(responseStatus).send(StandardResponse(
-            true,
-            "Prediction job submitted successfully",
-            responseBody,
-            null
-        ));
+        } else if (responseStatus === 401 && responseBody?.error === "Token is missing") {
+            throw new Error(ToxicityDetectionErrors.TOKEN_IS_MISSING);
+
+        } else if (responseStatus === 401 && responseBody?.error === "Token has expired") {
+            throw new Error(ToxicityDetectionErrors.TOKEN_HAS_EXPIRED);
+            
+        } else if (responseStatus === 401 && responseBody?.error === "Invalid token") {
+            throw new Error(ToxicityDetectionErrors.INVALID_TOKEN);
+        }
+        throw new Error(ToxicityDetectionErrors.UNEXPECTED_ERROR);
 
     } catch (error) {
         return await ErrorResponse(error, res, '/toxicitydetection/predict', {
@@ -254,20 +267,38 @@ router.get('/result/:job_id', isAuthenticated, async (req, res) => {
     let responseBody;
 
     try {
-        response = await fetch(`${ toxicityDetectionServiceApi }/result/${ req.params.job_id }`);
+        response = await fetch(`${ toxicityDetectionServiceApi }/result/${ req.params.job_id }`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${ req.user.jwt }`,
+                'Content-Type': 'application/json',
+            },
+        });
         responseStatus = response.status;
         responseBody = await response.json();
 
+        if (responseStatus === 200) {
+            return res.status(responseStatus).send(StandardResponse(
+                true,
+                "Prediction result retrieved successfully",
+                responseBody,
+                null
+            ));
+        }
+
         if (responseStatus === 404) {
             throw new Error(ToxicityDetectionErrors.JOB_ID_NOT_FOUND);
-        } 
+            
+        } else if (responseStatus === 401 && responseBody?.error === "Token is missing") {
+            throw new Error(ToxicityDetectionErrors.TOKEN_IS_MISSING);
 
-        return res.status(responseStatus).send(StandardResponse(
-            true,
-            "Prediction result retrieved successfully",
-            responseBody,
-            null
-        ));
+        } else if (responseStatus === 401 && responseBody?.error === "Token has expired") {
+            throw new Error(ToxicityDetectionErrors.TOKEN_HAS_EXPIRED);
+            
+        } else if (responseStatus === 401 && responseBody?.error === "Invalid token") {
+            throw new Error(ToxicityDetectionErrors.INVALID_TOKEN);
+        }
+        throw new Error(ToxicityDetectionErrors.UNEXPECTED_ERROR);
 
     } catch (error) {
         return await ErrorResponse(error, res, '/toxicitydetection/result', {

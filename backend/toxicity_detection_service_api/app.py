@@ -10,6 +10,10 @@ from flasgger import Swagger
 from concurrent.futures import ThreadPoolExecutor
 import signal
 import sys
+import jwt
+from dotenv import load_dotenv
+from functools import wraps
+
 
 # ------------------------------------------------------------------------------
 # Hugging Face model setup
@@ -17,6 +21,9 @@ import sys
 os.environ["TORCH_HOME"] = "./model_cache"
 os.environ["HF_HOME"] = "./hf_cache"
 os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
+
+# Load environment variables from a .env file
+load_dotenv()
 
 from detoxify import Detoxify
 model = Detoxify('original')  # or 'multilingual'
@@ -26,6 +33,10 @@ model = Detoxify('original')  # or 'multilingual'
 # ------------------------------------------------------------------------------
 app = Flask(__name__)
 CORS(app)
+
+# Set the secret key in Flask config
+app.config['JWT_SECRET'] = os.getenv('JWT_SECRET')
+
 swagger = Swagger(app, template={
     "info": {
         "title": "Toxicity Detection API",
@@ -83,7 +94,33 @@ def handle_http_exception(e):
     response.content_type = "application/json"
     return response, e.code
 
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        SECRET_KEY = app.config['JWT_SECRET']
+
+        # Check if Authorization header is present
+        if 'Authorization' in request.headers:
+            auth_header = request.headers['Authorization']
+            if auth_header.startswith("Bearer "):
+                token = auth_header.split(" ")[1]
+
+        if not token:
+            return jsonify({"error": "Token is missing"}), 401
+
+        try:
+            jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            return jsonify({"error": "Token has expired"}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({"error": "Invalid token"}), 401
+
+        return f(*args, **kwargs)
+    return decorated
+
 @app.route("/predict", methods=["POST"])
+@token_required
 def predict_endpoint():
     """
     Submit a new text for toxicity prediction.
@@ -156,6 +193,7 @@ def predict_endpoint():
     return jsonify({"job_id": job_id, "status": "waiting"})
 
 @app.route("/result/<job_id>", methods=["GET"])
+@token_required
 def get_result(job_id):
     """
     Retrieve prediction result for a specific job.

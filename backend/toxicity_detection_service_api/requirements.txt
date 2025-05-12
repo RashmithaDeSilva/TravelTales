@@ -2,3 +2,5 @@ detoxify
 flask
 flask-cors
 flasgger
+PyJWT
+python-dotenv

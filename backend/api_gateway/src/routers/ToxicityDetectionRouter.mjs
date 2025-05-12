@@ -288,6 +288,7 @@ router.get('/result/:job_id', isAuthenticated, async (req, res) => {
 
         if (responseStatus === 404) {
             throw new Error(ToxicityDetectionErrors.JOB_ID_NOT_FOUND);
+            
         } else if (responseStatus === 401 && responseBody?.error === "Token is missing") {
             throw new Error(ToxicityDetectionErrors.TOKEN_IS_MISSING);
 

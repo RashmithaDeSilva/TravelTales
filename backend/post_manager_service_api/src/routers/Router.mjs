@@ -3,11 +3,13 @@ import dotenv from 'dotenv';
 import StandardResponse from '../utils/responses/StandardResponse.mjs';
 import CommonErrors from '../utils/errors/CommonErrors.mjs';
 import ErrorResponse from '../utils/responses/ErrorResponse.mjs';
+import PostRouter from './PostRouter.mjs';
 
 
 dotenv.config();
 const API_VERSION = process.env.API_VERSION || 'v1';
 const router = Router();
+router.use('/auth/post', PostRouter);
 
 
 /**

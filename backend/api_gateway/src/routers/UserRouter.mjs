@@ -99,7 +99,6 @@ router.get('/info', isAuthenticated, async (req, res) => {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${ req.user.jwt }`,
-                'Cookie': req.headers.cookie || '',
             },
         });
         responseStatus = response.status;
@@ -255,7 +254,6 @@ router.put('/update', isAuthenticated, async (req, res) => {
             headers: {
                 'Authorization': `Bearer ${ req.user.jwt }`,
                 'Content-Type': 'application/json',
-                'Cookie': req.headers.cookie || '',
             },
             body: JSON.stringify(req.body),
         });
@@ -431,7 +429,6 @@ router.patch('/changepassword', isAuthenticated, async (req, res) => {
             headers: {
                 'Authorization': `Bearer ${ req.user.jwt }`,
                 'Content-Type': 'application/json',
-                'Cookie': req.headers.cookie || '',
             },
             body: JSON.stringify(req.body),
         });
@@ -623,7 +620,6 @@ router.get('/followers&followed', isAuthenticated, async (req, res) => {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${ req.user.jwt }`,
-                'Cookie': req.headers.cookie || '',
             },
         });
         responseStatus = response.status;
@@ -780,7 +776,6 @@ router.post('/follow', isAuthenticated, async (req, res) => {
             headers: {
                 'Authorization': `Bearer ${ req.user.jwt }`,
                 'Content-Type': 'application/json',
-                'Cookie': req.headers.cookie || '',
             },
             body: JSON.stringify(req.body),
         });
@@ -939,7 +934,6 @@ router.delete('/unfollow', isAuthenticated, async (req, res) => {
             headers: {
                 'Authorization': `Bearer ${ req.user.jwt }`,
                 'Content-Type': 'application/json',
-                'Cookie': req.headers.cookie || '',
             },
             body: JSON.stringify(req.body),
         });

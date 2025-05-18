@@ -25,7 +25,8 @@ class UserValidationSchema {
                         error: "User name can't be empty!"
                     }
                 },
-                isString: {
+                custom: {
+                    options: (value) => typeof value === 'string',
                     errorMessage: {
                         error: "User name must be a string!"
                     }
@@ -57,7 +58,8 @@ class UserValidationSchema {
                         error: "First name can't be empty!"
                     }
                 },
-                isString: {
+                custom: {
+                    options: (value) => typeof value === 'string',
                     errorMessage: {
                         error: "First name must be a string!"
                     }
@@ -89,7 +91,8 @@ class UserValidationSchema {
                         error: "Surname can't be empty!"
                     }
                 },
-                isString: {
+                custom: {
+                    options: (value) => typeof value === 'string',
                     errorMessage: {
                         error: "Surname must be a string!"
                     }
@@ -121,7 +124,8 @@ class UserValidationSchema {
                         error: "Email can't be empty!"
                     }
                 },
-                isString: {
+                custom: {
+                    options: (value) => typeof value === 'string',
                     errorMessage: {
                         error: "Email must be a string!"
                     }
@@ -165,7 +169,8 @@ class UserValidationSchema {
                         error: "Password can't be empty!"
                     }
                 },
-                isString: {
+                custom: {
+                    options: (value) => typeof value === 'string',
                     errorMessage: {
                         error: "Password must be a string!"
                     }
@@ -190,7 +195,8 @@ class UserValidationSchema {
                         error: "Confirm password cannot be empty!"
                     }
                 },
-                isString: {
+                custom: {
+                    options: (value) => typeof value === 'string',
                     errorMessage: {
                         error: "Confirm password must be a string!"
                     }
@@ -221,7 +227,8 @@ class UserValidationSchema {
                         error: "Old password cannot be empty!"
                     }
                 },
-                isString: {
+                custom: {
+                    options: (value) => typeof value === 'string',
                     errorMessage: {
                         error: "Old password must be a string!"
                     }

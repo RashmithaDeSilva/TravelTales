@@ -13,6 +13,9 @@ README.md
 /backend/post_manager_service_api/node_modules/
 /backend/post_manager_service_api/.env
 
+/backend/rest_countries_service_api/node_modules/
+/backend/rest_countries_service_api/.env
+
 /backend/country_finder_service_api/env/
 /backend/country_finder_service_api/hf_cache/
 /backend/country_finder_service_api/results.txt

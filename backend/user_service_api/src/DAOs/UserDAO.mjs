@@ -14,12 +14,12 @@ class UserDAO {
     // Is id exists
     async isIdExists(userId) {
         try {
-            const result = await pool.query(`
+            const [result] = await pool.query(`
                 SELECT EXISTS(
                     SELECT 1 FROM users WHERE id = ?
                 ) AS user_exists;
             `, [userId]);
-            if (result[0][0].user_exists !== 1) {
+            if (result[0].user_exists !== 1) {
                 throw new Error(UserErrors.INVALID_USER_ID);
             }
             return true;

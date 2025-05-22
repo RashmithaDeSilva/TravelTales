@@ -56,14 +56,14 @@ class FollowsDAO {
 
     // Is following
     async isFollowing(follower_id, followed_id) {
-        const result = await pool.query(`
+        const [result] = await pool.query(`
             SELECT EXISTS (
                 SELECT 1
                 FROM follows
                 WHERE follower_id = ? AND followed_id = ?
             ) AS is_following;
         `, [follower_id, followed_id]);
-        return result[0][0]?.is_following !== 0;
+        return result[0]?.is_following !== 0;
     }
 
     // Follow user
@@ -71,12 +71,12 @@ class FollowsDAO {
         try {
             const isFollowing = await this.isFollowing(follower_id, followed_id);
             if (!isFollowing) {
-                const result = await pool.query(`
+                const [result] = await pool.query(`
                     INSERT INTO follows (follower_id, followed_id)
                     SELECT ?, ?
                     WHERE NOT EXISTS (SELECT 1 FROM follows WHERE follower_id = ? AND followed_id = ?);
                 `, [follower_id, followed_id, follower_id, followed_id]);
-                return result[0].affectedRows === 1
+                return result.affectedRows === 1
             }
             throw new Error(FollowsError.YOU_ALREADY_FOLLOW_THIS_PERSON);
             
@@ -90,11 +90,11 @@ class FollowsDAO {
         try {
             const isFollowing = await this.isFollowing(follower_id, unfollow_id);
             if (isFollowing) {
-                const result = await pool.query(`
+                const [result] = await pool.query(`
                     DELETE FROM follows
                     WHERE follower_id = ? AND followed_id = ?;
                 `, [follower_id, unfollow_id]);
-                return result[0].affectedRows === 1
+                return result.affectedRows === 1
             }
             throw new Error(FollowsError.YOU_ARE_NOT_FOLLOWING_THIS_PERSON);
             

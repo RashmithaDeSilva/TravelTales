@@ -6,6 +6,7 @@ import CommonErrors from '../utils/errors/CommonErrors.mjs';
 dotenv.config();
 const toxicityDetectionServiceApi = `http://${ process.env.TOXICITY_DETECTION_SERVICE_API_HOST }:${ process.env.TOXICITY_DETECTION_SERVICE_API_PORT }`;
 
+
 class ToxicityDetectionService {
     constructor() {
     }
@@ -25,7 +26,7 @@ class ToxicityDetectionService {
             const responseStatus = response.status;
             const responseBody = await response.json();
             if (responseStatus !== 200) {
-                throw new Error(CommonErrors.UNEXPECTED_ERROR);
+                throw new Error(CommonErrors.INTERNAL_SERVER_ERROR);
             }
             return responseBody;
 
@@ -46,7 +47,7 @@ class ToxicityDetectionService {
             const responseStatus = response.status;
             const responseBody = await response.json();
             if (responseStatus !== 200) {
-                throw new Error(CommonErrors.UNEXPECTED_ERROR);
+                throw new Error(CommonErrors.INTERNAL_SERVER_ERROR);
             }
             return responseBody;
 

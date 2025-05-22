@@ -1,5 +1,7 @@
 const PostErrors = {
-    POST_IS_NOT_CREATED_TRY_AGAIN : "Post is not created, try again",
+    POST_IS_NOT_CREATED_TRY_AGAIN: "Post is not created, try again",
+    POST_CONTAINS_TOXIC_CONTENT: "Post contains toxic content",
+    IMAGE_ID_IS_EXIST: "Image id is exist",
 }
 
 export default PostErrors;

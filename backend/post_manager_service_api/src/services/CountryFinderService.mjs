@@ -26,7 +26,7 @@ class CountryFinderService {
             const responseStatus = response.status;
             const responseBody = await response.json();
             if (responseStatus !== 200) {
-                throw new Error(CommonErrors.UNEXPECTED_ERROR);
+                throw new Error(CommonErrors.INTERNAL_SERVER_ERROR);
             }
             return responseBody;
 
@@ -47,7 +47,7 @@ class CountryFinderService {
             const responseStatus = response.status;
             const responseBody = await response.json();
             if (responseStatus !== 200) {
-                throw new Error(CommonErrors.UNEXPECTED_ERROR);
+                throw new Error(CommonErrors.INTERNAL_SERVER_ERROR);
             }
             return responseBody;
 

@@ -7,7 +7,7 @@ import fetch from 'node-fetch';
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET || '5iLt1QIXlARhJc2mSwXB5yETHH+ZsKslfB03XJpntC'; // use the same secret as the api gateway
-const USER_SERVICE_API = process.env.USER_SERVICE_API || 'http://172.20.5.21:3002'; ///api/v1/auth/user/status
+const USER_SERVICE_API = process.env.USER_SERVICE_API || 'http://172.20.5.21:4001'; ///api/v1/auth/user/status
 
 const isAuthenticated = async (req, res, next) => {
     try {
@@ -30,11 +30,9 @@ const isAuthenticated = async (req, res, next) => {
 
         // Attach user info to request object
         req.user = decoded;
-
         return next(); // Proceed to route or next middleware
 
     } catch (error) {
-        console.log(error);
         return await ErrorResponse(
             new Error(CommonErrors.AUTHENTICATION_FAILED),
             res,

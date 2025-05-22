@@ -12,13 +12,16 @@ import cookieParser from 'cookie-parser';
 import tinyCsrf from 'tiny-csrf';
 import ErrorResponse from './src/utils/responses/ErrorResponse.mjs';
 import CsrfTokenErrors from './src/utils/errors/CsrfTokenErrors.mjs';
+import CommonErrors from './src/utils/errors/CommonErrors.mjs';
+
 
 // Setup express app
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 4000;
 const API_VERSION = process.env.API_VERSION || 'v1';
 const ENV = process.env.ENV || 'DEV';
+
 
 // Swagger setup
 if (ENV === "DEV") {
@@ -73,6 +76,41 @@ app.use((err, req, res, next) => {
   
 // Routers setup
 app.use(`/api/${ API_VERSION }/`, router);
+
+/**
+ * @swagger
+ * /api/v1/{any}:
+ *   all:
+ *     summary: Invalid endpoint
+ *     description: Handles all undefined routes and returns a 404 error.
+ *     parameters:
+ *       - in: path
+ *         name: any
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Any undefined route
+ *     responses:
+ *       404:
+ *         description: Not Found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Not Found !"
+ *                 redirect:
+ *                   type: string
+ *                   example: "Invalid endpoint, redirect to '/api/v1'"
+ */
+app.use((req, res, next) => {
+  return ErrorResponse(new Error(CommonErrors.NOT_FOUND), res);
+});
 
 app.listen(PORT, ()=>{
     log(LogTypes.INFO, `Server is running on http://localhost:${ PORT }`);

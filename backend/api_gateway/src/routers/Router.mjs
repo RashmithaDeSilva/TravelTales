@@ -1,8 +1,6 @@
 import { Router } from 'express';
 import dotenv from 'dotenv';
 import StandardResponse from '../utils/responses/StandardResponse.mjs';
-import CommonErrors from '../utils/errors/CommonErrors.mjs';
-import ErrorResponse from '../utils/responses/ErrorResponse.mjs';
 import UserAuthRouter from './UserAuthRouter.mjs';
 import UserRouter from './UserRouter.mjs';
 import CountryFinderRouter from './CountryFinderRouter.mjs';
@@ -91,41 +89,6 @@ router.get('/auth/csrf-token', (req, res) => {
         null
     ));
 });
-
-/**
- * @swagger
- * /api/v1/{any}:
- *   all:
- *     summary: Invalid endpoint
- *     description: Handles all undefined routes and returns a 404 error.
- *     parameters:
- *       - in: path
- *         name: any
- *         required: true
- *         schema:
- *           type: string
- *         description: Any undefined route
- *     responses:
- *       404:
- *         description: Not Found.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: "Not Found !"
- *                 redirect:
- *                   type: string
- *                   example: "Invalid endpoint, redirect to '/api/v1'"
- */
-// router.all('', (req, res) => {
-//     return ErrorResponse(new Error(CommonErrors.NOT_FOUND), res);
-// });
 
 
 export default router;

@@ -28,6 +28,7 @@ async function ErrorResponse(error, res, location = null, data = null) {
     try {
         switch (error.message) {
             case CommonErrors.VALIDATION_ERROR:
+            case CommonErrors.INVALID_JSON_FORMAT:
                 return res.status(400).send(StandardResponse(
                     false,
                     error.message,
@@ -38,8 +39,10 @@ async function ErrorResponse(error, res, location = null, data = null) {
             case DatabaseErrors.EMAIL_ALREADY_EXISTS:
             case DatabaseErrors.INVALID_EMAIL_ADDRESS_OR_PASSWORD:
             case DatabaseErrors.INVALID_EMAIL_ADDRESS:
+            case DatabaseErrors.INVALID_USER_NAME:
             case HashErrors.INVALID_OLD_PASSWORD:
             case UserError.INVALID_USER_ID:
+            case CommonErrors.USER_NAME_OR_IDS_EXPECT:
                 return res.status(400).send(StandardResponse(
                     false,
                     error.message,

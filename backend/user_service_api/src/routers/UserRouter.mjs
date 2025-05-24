@@ -19,6 +19,137 @@ const followsService = new FollowsService();
 
 /**
  * @swagger
+ * /api/v1/auth/user/find:
+ *   post:
+ *     summary: Find users by username or user IDs
+ *     description: Retrieves users by username or user ID list from the request body. At least one must be provided.
+ *     tags:
+ *       - User
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               user_name:
+ *                 type: string
+ *                 description: The username to search for
+ *                 example: "john_doe"
+ *               ids:
+ *                 type: array
+ *                 description: Array of user IDs to search for
+ *                 items:
+ *                   type: integer
+ *                 example: [1, 2, 3]
+ *             oneOf:
+ *               - required: [user_name]
+ *               - required: [ids]
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved user(s).
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "User info."
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "123e4567-e89b-12d3-a456-426614174000"
+ *                       user_name:
+ *                         type: string
+ *                         example: "john_doe"
+ *                       email:
+ *                         type: string
+ *                         example: "john@example.com"
+ *                 errors:
+ *                   type: "null"
+ *                   example: null
+ *       400:
+ *         description: Validation error (e.g., neither user_name nor ids provided)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Validation error"
+ *                 data:
+ *                   type: "null"
+ *                   example: null
+ *                 errors:
+ *                   type: object
+ *                   example:
+ *                     message: "At least one of user_name or ids must be provided"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ *                 data:
+ *                   type: "null"
+ *                   example: null
+ *                 errors:
+ *                   type: "null"
+ *                   example: null
+ */
+router.post('/find', [
+    checkSchema({
+        ...UserValidationSchema.userNameFilterValidation(),
+        ...UserValidationSchema.userIdsValidation(),
+    })
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return await ErrorResponse(new Error(CommonErrors.VALIDATION_ERROR), res, '/user/find', errors);
+    }
+    const data = matchedData(req);
+
+    try {
+        if (!data.user_name && !data.ids) {
+            throw new Error(CommonErrors.USER_NAME_OR_IDS_EXPECT);
+        }
+
+        const users = (data.user_name) 
+        ? await userService.getUserByUserName(data.user_name.toLowerCase()) 
+        : await userService.getUserByUserIds(data.ids);
+
+        return res.status(200).send(StandardResponse(
+            true,
+            "User info.",
+            (data.user_name) ? users : users.users,
+            (data.user_name) ? null : { invalide_ids: users.invalideIds },
+        ));
+    } catch (error) {
+        return await ErrorResponse(error, res, '/user/find', data);
+    }
+});
+
+/**
+ * @swagger
  * /api/v1/auth/user/info:
  *   get:
  *     summary: "Get user status"
@@ -98,13 +229,18 @@ const followsService = new FollowsService();
  *       bearerFormat: JWT
  */
 router.get('/info', isAuthenticated, async (req, res) => {
-    const user = await userService.getUserById(req.user.id);
-    return res.status(200).send(StandardResponse(
-        true,
-        "User info.",
-        user,
-        null
-    ));
+    try {
+        const user = await userService.getUserById(req.user.id);
+        return res.status(200).send(StandardResponse(
+            true,
+            "User info.",
+            user,
+            null
+        ));
+
+    } catch (error) {
+        return await ErrorResponse(error, res, '/user/info', data);
+    }
 });
 
 /**
@@ -247,7 +383,7 @@ router.put('/update', isAuthenticated, [
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return await ErrorResponse(new Error(CommonErrors.VALIDATION_ERROR), res, '/user/update/', errors);
+        return await ErrorResponse(new Error(CommonErrors.VALIDATION_ERROR), res, '/user/update', errors);
     }
 
     const data = matchedData(req);
@@ -257,7 +393,7 @@ router.put('/update', isAuthenticated, [
         await userService.updateUser(data);
 
     } catch (error) {
-        return await ErrorResponse(error, res, '/user/update/', data);
+        return await ErrorResponse(error, res, '/user/update', data);
     }
 
     return ENV === "DEV" ? res.status(200).send(StandardResponse(
@@ -754,7 +890,7 @@ router.get('/followers&followed', isAuthenticated, async (req, res) => {
  */
 router.post('/follow', isAuthenticated, [
     checkSchema({
-        ...UserValidationSchema.followerId(),
+        ...UserValidationSchema.followerIdValidation(),
     })
 ], async (req, res) => {
     const errors = validationResult(req);
@@ -906,7 +1042,7 @@ router.post('/follow', isAuthenticated, [
  */
 router.delete('/unfollow', isAuthenticated, [
     checkSchema({
-        ...UserValidationSchema.unfollowId(),
+        ...UserValidationSchema.unfollowIdValidation(),
     })
 ], async (req, res) => {
     const errors = validationResult(req);

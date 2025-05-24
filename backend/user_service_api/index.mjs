@@ -23,6 +23,14 @@ if (ENV === "DEV") {
 // Middleware
 app.use(express.json());
 
+// Handle bad JSON
+app.use(async (err, req, res, next) => {
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+        return await ErrorResponse(new Error(CommonErrors.INVALID_JSON_FORMAT), res);
+    }
+    next(err); // forward to other error handlers
+});
+
 // Routers setup
 app.use(`/api/${ API_VERSION }/`, router);
 
@@ -57,8 +65,8 @@ app.use(`/api/${ API_VERSION }/`, router);
  *                   type: string
  *                   example: "Invalid endpoint, redirect to '/api/v1'"
  */
-app.use((req, res, next) => {
-  return ErrorResponse(new Error(CommonErrors.NOT_FOUND), res);
+app.use(async (req, res, next) => {
+  return await ErrorResponse(new Error(CommonErrors.NOT_FOUND), res);
 });
 
 app.listen(PORT, ()=>{

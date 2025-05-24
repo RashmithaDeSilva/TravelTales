@@ -243,7 +243,7 @@ class UserValidationSchema {
         };
     }
 
-    static followerId() {
+    static followerIdValidation() {
         return {
             follower_id: {
                 notEmpty: {
@@ -260,7 +260,7 @@ class UserValidationSchema {
         };
     }
 
-    static unfollowId() {
+    static unfollowIdValidation() {
         return {
             unfollow_id: {
                 notEmpty: {
@@ -276,6 +276,39 @@ class UserValidationSchema {
             }
         };
     }
+
+    static userNameFilterValidation() {
+        return {
+            user_name: {
+                optional: true,
+                isString: {
+                    errorMessage: "User name must be a string!"
+                },
+                matches: {
+                    options: [/^[A-Za-z0-9._-]+$/],
+                    errorMessage: "User name can only contain letters, numbers, dots (.), underscores (_) and dashes (-), without spaces!"
+                }
+            }
+        };
+    }
+
+    static userIdsValidation() {
+        return {
+            ids: {
+                optional: true,
+                isArray: {
+                    errorMessage: 'Ids must be an array of numbers'
+                }
+            },
+            'ids.*': {
+                isInt: {
+                    errorMessage: 'Each user ID must be an integer'
+                },
+                toInt: true
+            }
+        };
+    }
+
 }
 
 export default UserValidationSchema;

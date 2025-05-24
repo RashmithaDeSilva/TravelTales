@@ -3,6 +3,7 @@ const DatabaseErrors = {
     INVALID_EMAIL_ADDRESS_OR_PASSWORD: "Invalid email address or password",
     INVALID_EMAIL_ADDRESS: "Invalid email address",
     USER_NOT_FOUND: "User not found",
+    INVALID_USER_NAME: "Invalid user name",
 }
 
 export default DatabaseErrors;

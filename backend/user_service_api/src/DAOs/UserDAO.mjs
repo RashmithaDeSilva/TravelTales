@@ -5,6 +5,7 @@ import UserErrors from '../utils/errors/UserError.mjs';
 import dotenv from 'dotenv';
 
 dotenv.config();
+const USER_NAME_SEARCH_LIMIT = process.env.USER_NAME_SEARCH_LIMIT || 5;
 const pool = await getDatabasePool();
 
 class UserDAO {
@@ -60,7 +61,10 @@ class UserDAO {
     async getUserById(id) {
         try {
             const [row] = await pool.query(`SELECT * FROM users WHERE id = ?`, [id]);
-            return row.length === 0 ? null : UserModel.getResponseUserModel(
+            if (row.length === 0) {
+                throw new Error(DatabaseErrors.USER_NOT_FOUND);
+            }
+            return UserModel.getResponseUserModel(
                 row[0].user_name,
                 row[0].first_name, 
                 row[0].surname,
@@ -73,6 +77,65 @@ class UserDAO {
             throw error;
         }
     }
+
+    // Get user using user name
+    async getUserByUserName(userName) {
+        try {
+            const [rows] = await pool.query(`SELECT * FROM users WHERE user_name LIKE ? LIMIT ${ USER_NAME_SEARCH_LIMIT }`, 
+                [`${ userName }%`]);
+            if (rows.length === 0) {
+                throw new Error(DatabaseErrors.INVALID_USER_NAME);
+            }
+            
+            return rows.map(user =>
+                UserModel.getResponseUserModelPublic(
+                    user.user_name,
+                    user.email,
+                    user.id
+                )
+            );
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Get users using ids
+    async getUserByUserIds(ids) {
+        try {
+            if (!ids || !ids.length) {
+                return { users: [], invalideIds: [] };
+            }
+
+            // Use placeholders for each id in the query to prevent SQL injection
+            const placeholders = ids.map(() => '?').join(',');
+            const [rows] = await pool.query(`SELECT id, user_name, email FROM users WHERE id IN (${ placeholders })`, ids);
+
+            // Map returned users to your UserModel
+            const users = rows.map(user =>
+                UserModel.getResponseUserModelPublic(
+                    user.user_name,
+                    user.email,
+                    user.id
+                )
+            );
+
+            // Collect found user IDs
+            const foundIds = rows.map(u => u.id);
+
+            // Find IDs that are not found
+            const invalideIds = ids.filter(id => !foundIds.includes(id));
+
+            return {
+                users,
+                invalideIds
+            };
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
 
     // Update user
     async update(user) {

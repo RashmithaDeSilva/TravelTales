@@ -111,6 +111,77 @@ class PostValidationSchema {
         }
     }
 
+    static pageQuery() {
+        return {
+            page: {
+                in: ['query'],
+                notEmpty: {
+                    errorMessage: 'Page cannot be empty!'
+                },
+                isInt: {
+                    options: { min: 1 },
+                    errorMessage: 'Page must be a positive number!'
+                },
+                toInt: true,
+            }
+        };
+    }
+
+    static sizeQuery() {
+        return {
+            size: {
+                in: ['query'],
+                notEmpty: {
+                    errorMessage: 'Size cannot be empty!'
+                },
+                isInt: {
+                    options: { min: 1 },
+                    errorMessage: 'Size must be a positive number!'
+                },
+                toInt: true,
+            }
+        };
+    }
+
+    static countryQuery() {
+        return {
+            country: {
+                in: ['query'],
+                optional: true,
+                isString: {
+                    errorMessage: 'Country must be a string!'
+                }
+            }
+        };
+    }
+
+    static userNameQuery() {
+        return {
+            user_name: {
+                in: ['query'],
+                optional: true,
+                isString: {
+                    errorMessage: 'User name must be a string!'
+                }
+            }
+        };
+    }
+
+    static idQuery() {
+        return {
+            post_id: {
+                in: ['query'],
+                optional: true,
+                isInt: {
+                    errorMessage: {
+                        error: "ID must be a Number!"
+                    }
+                },
+                toInt: true,
+            }
+        };
+    }
+
 }
 
 export default PostValidationSchema;

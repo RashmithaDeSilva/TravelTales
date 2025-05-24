@@ -2,7 +2,8 @@ import StandardResponse from "./StandardResponse.mjs";
 import ErrorLogService from "../../services/ErrorLogService.mjs";
 import CommonErrors from "../errors/CommonErrors.mjs";
 import PostErrors from '../errors/PostErrors.mjs';
-import RestCountryError from '../errors/RestCountryError.mjs';
+import RestCountryErrors from '../errors/RestCountryErrors.mjs';
+import UserErrors from "../errors/UserErrors.mjs";
 import { LogTypes } from "../enums/LogTypes.mjs";
 import { log } from "../ConsoleLog.mjs";
 import dotenv from 'dotenv';
@@ -26,8 +27,10 @@ async function logError(location, error, data) {
 async function ErrorResponse(error, res, location = null, data = null) {
     try {
         switch (error.message) {
-            case RestCountryError.INVALID_COUNTRY_NAME:
+            case RestCountryErrors.INVALID_COUNTRY_NAME:
             case CommonErrors.VALIDATION_ERROR:
+            case CommonErrors.INVALID_JSON_FORMAT:
+            case UserErrors.INVALID_USER_NAME:
                 return res.status(400).send(StandardResponse(
                     false,
                     error.message,
@@ -51,7 +54,7 @@ async function ErrorResponse(error, res, location = null, data = null) {
                     { redirect: `/api/${ API_VERSION }/auth/login` }
                 ));
 
-            case RestCountryError.COUNTRY_NOT_FOUND:
+            case RestCountryErrors.COUNTRY_NOT_FOUND:
                 return res.status(404).send(StandardResponse(
                     false,
                     error.message,

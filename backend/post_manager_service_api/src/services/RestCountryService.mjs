@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 import CommonErrors from '../utils/errors/CommonErrors.mjs';
-import RestCountryError from '../utils/errors/RestCountryError.mjs';
+import RestCountryErrors from '../utils/errors/RestCountryErrors.mjs';
 
 
 dotenv.config();
@@ -26,8 +26,8 @@ class RestCountryService {
             const responseStatus = response.status;
             const responseBody = await response.json();
 
-            if (responseStatus === 404 && responseBody.message === RestCountryError.COUNTRY_NOT_FOUND) {
-                throw new Error(RestCountryError.INVALID_COUNTRY_NAME);
+            if (responseStatus === 404 && responseBody.message === RestCountryErrors.COUNTRY_NOT_FOUND) {
+                throw new Error(RestCountryErrors.INVALID_COUNTRY_NAME);
             }
 
             if (responseStatus !== 200) {

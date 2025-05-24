@@ -1,6 +1,6 @@
-const RestCountryError = {
+const RestCountryErrors = {
     INVALID_COUNTRY_NAME: "Invalid country name",
     COUNTRY_NOT_FOUND: "Country not found",
 }
 
-export default RestCountryError;
+export default RestCountryErrors;

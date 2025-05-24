@@ -31,6 +31,14 @@ if (ENV === "DEV") {
 // Middleware
 app.use(express.json());
 
+// Handle bad JSON
+app.use(async (err, req, res, next) => {
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+        return await ErrorResponse(new Error(CommonErrors.INVALID_JSON_FORMAT), res);
+    }
+    next(err); // forward to other error handlers
+});
+
 // Cookie setup
 app.use(cookieParser(process.env.COOKIE_SECRET || 'argon2id19553bnfppLSoqliLt1QIXlA'));
 
@@ -67,9 +75,9 @@ app.use(tinyCsrf(
 ));
 
 // Error handling for CSRF
-app.use((err, req, res, next) => {
+app.use(async (err, req, res, next) => {
     if (err.message === `Did not get a valid CSRF token for '${req.method} ${req.originalUrl}': ${req.body?._csrf} v. ${req.signedCookies.csrfToken}`) {
-      return ErrorResponse(new Error(CsrfTokenErrors.INVALID_CSRF_TOKEN), res);
+      return await ErrorResponse(new Error(CsrfTokenErrors.INVALID_CSRF_TOKEN), res);
     }
     next(err);
 });
@@ -108,8 +116,8 @@ app.use(`/api/${ API_VERSION }/`, router);
  *                   type: string
  *                   example: "Invalid endpoint, redirect to '/api/v1'"
  */
-app.use((req, res, next) => {
-  return ErrorResponse(new Error(CommonErrors.NOT_FOUND), res);
+app.use(async (req, res, next) => {
+  return await ErrorResponse(new Error(CommonErrors.NOT_FOUND), res);
 });
 
 app.listen(PORT, ()=>{

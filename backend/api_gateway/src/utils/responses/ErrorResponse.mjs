@@ -30,6 +30,7 @@ async function ErrorResponse(error, res, location = null, data = null) {
     try {
         switch (error.message) {
             case CommonErrors.VALIDATION_ERROR:
+            case CommonErrors.INVALID_JSON_FORMAT:
                 return res.status(400).send(StandardResponse(
                     false,
                     error.message,

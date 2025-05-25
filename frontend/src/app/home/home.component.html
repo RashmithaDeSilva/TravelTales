@@ -1,0 +1,39 @@
+<div class="feed-container">
+  @for (post of posts(); track post.id) {
+    <div class="post-card">
+      <!-- Header -->
+      <div class="post-header">
+        <div class="user-info">
+          <div class="avatar">👤</div>
+          <div class="meta">
+            <p class="username">{{ post.userName }}</p>
+            <p class="country">{{ post.country }} • Visited: {{ post.dateOfVisit | date: 'yyyy-MM-dd' }}</p>
+          </div>
+        </div>
+        <div class="publish-date">{{ post.publishDate | date: 'yyyy-MM-dd' }}</div>
+      </div>
+
+      <!-- Title -->
+      <h2 class="post-title">{{ post.title }}</h2>
+
+      <!-- Content -->
+      <div class="post-content">
+        {{ post.content }}
+      </div>
+
+      <!-- Actions -->
+      <div class="post-actions">
+        <div class="left">
+          <i class="icon comment-icon"></i>
+          <span class="count">{{ post.commentsCount }}</span>
+        </div>
+        <div class="right">
+          <i class="icon like-icon"></i>
+          <span class="count">{{ post.likes }}</span>
+          <i class="icon dislike-icon"></i>
+          <span class="count">{{ post.disLikes }}</span>
+        </div>
+      </div>
+    </div>
+  }
+</div>

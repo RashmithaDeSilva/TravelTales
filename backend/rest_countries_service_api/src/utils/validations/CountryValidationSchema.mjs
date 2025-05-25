@@ -1,16 +1,15 @@
 import dotenv from "dotenv";
 
 dotenv.config();
-const COUNTRY_MIN_CHARACTERS_SIZE = process.env.COUNTRY_MIN_CHARACTERS_SIZE || 3;
-const COUNTRY_MAX_CHARACTERS_SIZE = process.env.COUNTRY_MAX_CHARACTERS_SIZE || 100;
 
 
 class CountryValidationSchema {
     constructor() {}
 
-    static country() {
+    static countryQueryValidation() {
         return {
             country: {
+                in: ['query'],
                 notEmpty: {
                     errorMessage: {
                         error: "Country can't be empty!"
@@ -22,17 +21,40 @@ class CountryValidationSchema {
                         error: "Country must be a string!"
                     }
                 },
-                isLength: {
-                    options: {
-                        min: parseInt(COUNTRY_MIN_CHARACTERS_SIZE),
-                        max: parseInt(COUNTRY_MAX_CHARACTERS_SIZE)
-                    },
-                    errorMessage: {
-                        error: `Country must be between ${ COUNTRY_MIN_CHARACTERS_SIZE } and ${ COUNTRY_MAX_CHARACTERS_SIZE } characters!`
-                    }
-                }
             }
         }
+    }
+
+    static pageQueryValidation() {
+        return {
+            page: {
+                in: ['query'],
+                notEmpty: {
+                    errorMessage: 'Page cannot be empty!'
+                },
+                isInt: {
+                    options: { min: 1 },
+                    errorMessage: 'Page must be a positive number!'
+                },
+                toInt: true,
+            }
+        };
+    }
+
+    static sizeQueryValidation() {
+        return {
+            size: {
+                in: ['query'],
+                notEmpty: {
+                    errorMessage: 'Size cannot be empty!'
+                },
+                isInt: {
+                    options: { min: 1 },
+                    errorMessage: 'Size must be a positive number!'
+                },
+                toInt: true,
+            }
+        };
     }
 
 }

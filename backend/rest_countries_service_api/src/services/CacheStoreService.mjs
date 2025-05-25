@@ -46,6 +46,17 @@ class CacheStoreService {
         }
     }
 
+    // Get country by name (Partial Match)
+    async getCountryByNameWithPageSize(data) {
+        try {
+            const countrys = await this.cacheStoreDAO.getCountryByNameWithPageSize(data.country, data.page, data.size);
+            return RestCountryResponse(countrys);
+        } catch (error) {
+            // console.log(error);
+            throw error;
+        }
+    }
+
     // Get country by currency (Partial Match)
     async getCountryByCurrency(currency) {
         try {

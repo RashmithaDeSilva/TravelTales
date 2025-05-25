@@ -45,6 +45,26 @@ class CacheStoreDAO {
         }
     }
 
+    // Get country using name (Partial Match) with pagination
+    async getCountryByNameWithPageSize(name, page = 1, size = 10) {
+        try {
+            const allCountries = await this.getAllCountryList();
+            const filteredCountries = allCountries.filter(country =>
+                country.toLowerCase().startsWith(name.toLowerCase())
+            );
+
+            const startIndex = (page - 1) * size;
+            const endIndex = startIndex + size;
+
+            const paginatedCountries = filteredCountries.slice(startIndex, endIndex);
+            return paginatedCountries;
+            
+        } catch (error) {
+            throw error;
+        }
+    }
+
+
     // Get country using currency information (Partial Match)
     async getCountryByCurrency(currency) {
         try {

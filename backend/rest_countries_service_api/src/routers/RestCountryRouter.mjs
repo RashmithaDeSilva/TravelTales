@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import dotenv from 'dotenv';
+import { validationResult, matchedData, checkSchema } from 'express-validator';
 import StandardResponse from '../utils/responses/StandardResponse.mjs';
 import isAuthenticated from '../middlewares/UserAuthMiddleware.mjs';
 import CacheStoreService from '../services/CacheStoreService.mjs';
@@ -8,13 +9,15 @@ import CacheStoreErrors from '../utils/errors/CacheStoreErrors.mjs';
 import ErrorResponse from '../utils/responses/ErrorResponse.mjs';
 import RestCountryErrors from '../utils/errors/RestCountryErrors.mjs';
 import CountryValidationSchema from '../utils/validations/CountryValidationSchema.mjs';
+import CommonErrors from '../utils/errors/CommonErrors.mjs';
+import RestCountryResponse from '../utils/responses/RestCountryResponse.mjs';
 
 
 dotenv.config();
 const router = Router();
 const cacheStoreService = new CacheStoreService();
 const errorLogService = new ErrorLogService();
-const DATA_RETRIEVE_API = process.env.DATA_RETRIEVE_API || 'https://restcountries.com/v3.1/all';
+const DATA_RETRIEVE_API = process.env.DATA_RETRIEVE_API || 'https://restcountries.com/v3.1';
 
 /**
  * @swagger
@@ -137,7 +140,7 @@ router.get('/', isAuthenticated, async (req, res) => {
             await errorLogService.createLog('/restcountry/', cacheError);
 
             // If cache fetch fails, fetch from external API
-            const response = await fetch( DATA_RETRIEVE_API );
+            const response = await fetch(`${ DATA_RETRIEVE_API }/all`);
             if (!response.ok) {
                 throw new Error(`${ CacheStoreErrors.FAILED_TO_FETCH_DATA  } (response status: ${ response.statusText })`);
             }
@@ -440,7 +443,8 @@ router.get('/name/:name', isAuthenticated, async (req, res) => {
             if (!response.ok) {
                 throw new Error(`${ CacheStoreErrors.FAILED_TO_FETCH_DATA } (response status: ${ response.statusText })`);
             }
-            restCountries = await response.json();
+            const countrys = await response.json();
+            restCountries = RestCountryResponse(countrys);
         }
 
         return res.status(200).send(StandardResponse(
@@ -452,6 +456,207 @@ router.get('/name/:name', isAuthenticated, async (req, res) => {
         
     } catch (error) {
         return await ErrorResponse(error, res, '/restcountry/name');
+    }
+});
+
+/**
+ * @swagger
+ * /api/v1/auth/restcountry/find:
+ *   get:
+ *     summary: Find countries by name
+ *     description: Searches for countries by partial name match with pagination. Requires authentication.
+ *     tags:
+ *       - RestCountry
+ *     parameters:
+ *       - in: query
+ *         name: country
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Country name to search
+ *       - in: query
+ *         name: page
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *         description: Page number
+ *       - in: query
+ *         name: size
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *         description: Number of items per page
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved the list of countries
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Rest country with name: United"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     countrys_count:
+ *                       type: integer
+ *                       example: 20
+ *                     countrys:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                             example: "United States"
+ *                           code:
+ *                             type: string
+ *                             example: "US"
+ *                 errors:
+ *                   type: "null"
+ *                   example: null
+ *       400:
+ *         description: "Invalid API key or missing authorization header."
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid API key"
+ *                 data:
+ *                   type: "null"
+ *                   example: null
+ *                 errors:
+ *                   type: string
+ *                   example: null
+ *       401:
+ *         description: "API key is required in the request header."
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "API key required"
+ *                 data:
+ *                   type: "null"
+ *                   example: null
+ *                 errors:
+ *                   type: string
+ *                   example: {"redirect":"/api/v1/auth"}
+ *       404:
+ *         description: "Country not found."
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Country not found"
+ *                 data:
+ *                   type: "null"
+ *                   example: null
+ *                 errors:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: "Internal server error."
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ *                 data:
+ *                   type: "null"
+ *                   example: null
+ *                 errors:
+ *                   type: string
+ *                   example: null
+ */
+router.get('/find', [
+    checkSchema({
+        ...CountryValidationSchema.countryQueryValidation(),
+        ...CountryValidationSchema.pageQueryValidation(),
+        ...CountryValidationSchema.sizeQueryValidation(),
+    })
+], async (req, res) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return await ErrorResponse(new Error(CommonErrors.VALIDATION_ERROR), res, '/restcountry/find', errors);
+        }
+        const data = matchedData(req);
+        let restCountries;
+        
+        try {
+            // Try to get countries from cache
+            restCountries = await cacheStoreService.getCountryByNameWithPageSize(data);
+
+            // If no data found in cache, return error
+            if (!restCountries || restCountries.length === 0) {
+                throw new Error(RestCountryErrors.COUNTRY_NOT_FOUND);
+            }
+
+        } catch (cacheError) {
+            // Log cache error
+            await errorLogService.createLog('/restcountry/find', cacheError);
+
+            const response = await fetch(`${DATA_RETRIEVE_API}/name/${encodeURIComponent(data.country)}`);
+            if (!response.ok) {
+                throw new Error(`${CacheStoreErrors.FAILED_TO_FETCH_DATA} (response status: ${response.statusText})`);
+            }
+
+            const responseCountries = await response.json();
+
+            // Apply partial match filter (if needed)
+            const filteredCountries = responseCountries.filter(country =>
+                country.name.common.toLowerCase().startsWith(data.country.toLowerCase())
+            );
+
+            // Apply pagination
+            const startIndex = (data.page - 1) * data.size;
+            const endIndex = startIndex + data.size;
+            const paginatedCountries = filteredCountries.slice(startIndex, endIndex);
+
+            // Return paginated result
+            restCountries = RestCountryResponse(paginatedCountries);
+        }
+
+        return res.status(200).send(StandardResponse(
+            true,
+            `Rest country with name: ${ data.country }`,
+            restCountries,
+            null
+        ));
+        
+    } catch (error) {
+        return await ErrorResponse(error, res, '/restcountry/find');
     }
 });
 
@@ -613,7 +818,8 @@ router.get('/currency/:name', isAuthenticated, async (req, res) => {
             if (!response.ok) {
                 throw new Error(`${ CacheStoreErrors.FAILED_TO_FETCH_DATA } (response status: ${ response.statusText })`);
             }
-            restCountries = await response.json();
+            const countrys = await response.json();
+            restCountries = RestCountryResponse(countrys);
         }
 
         return res.status(200).send(StandardResponse(
@@ -786,7 +992,8 @@ router.get('/capital/:name', isAuthenticated, async (req, res) => {
             if (!response.ok) {
                 throw new Error(`${ CacheStoreErrors.FAILED_TO_FETCH_DATA } (response status: ${ response.statusText })`);
             }
-            restCountries = await response.json();
+            const countrys = await response.json();
+            restCountries = RestCountryResponse(countrys);
         }
 
         return res.status(200).send(StandardResponse(
@@ -954,7 +1161,8 @@ router.get('/flag/:name', isAuthenticated, async (req, res) => {
             if (!response.ok) {
                 throw new Error(`${ CacheStoreErrors.FAILED_TO_FETCH_DATA } (response status: ${ response.statusText })`);
             }
-            restCountries = await response.json();
+            const countrys = await response.json();
+            restCountries = RestCountryResponse(countrys);
         }
 
         return res.status(200).send(StandardResponse(

@@ -75,7 +75,8 @@ jobs:
       
       - name: Start Docker Compose
         run: |
-          cd ../..
+          cd ..
+          cd ..
           docker compose --profile api_gateway up -d
 
 
@@ -334,7 +335,8 @@ jobs:
       
       - name: Start Docker Compose
         run: |
-          cd ../..
+          cd ..
+          cd ..
           docker compose --profile api_gateway up -d
 
       - name: Wait for API to come up

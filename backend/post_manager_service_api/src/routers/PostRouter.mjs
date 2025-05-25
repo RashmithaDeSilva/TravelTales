@@ -505,7 +505,7 @@ router.post('/create', isAuthenticated, [
 /**
  * @swagger
  * /api/v1/auth/post/update:
- *   post:
+ *   put:
  *     summary: Update a post
  *     description: Updates an existing post. Requires JWT authentication. The update will be processed asynchronously.
  *     tags:
@@ -634,7 +634,7 @@ router.post('/create', isAuthenticated, [
  *       scheme: bearer
  *       bearerFormat: JWT
  */
-router.post('/update', isAuthenticated, [
+router.put('/update', isAuthenticated, [
     checkSchema({
         ...PostValidationSchema.idValidation(),
         ...PostValidationSchema.titleValidation(),

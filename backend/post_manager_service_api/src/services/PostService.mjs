@@ -73,15 +73,19 @@ class PostService {
     // Get posts filter
     async getPostsFilter(page = PAGE, size = SIZE, country = null, userName = null) {
         try {
+            if (!country && !userName) {
+                return [];
+            }
+
             let user;
             if (userName) {
-                user = await userService.findUserByName(userName);
+                user = await userService.findUserByName(userName?.toLowerCase());
                 if(!user) {
                     throw new Error(UserErrors.INVALID_USER_NAME);
                 }
             }
             
-            const posts = await this.postDAO.getPostsFilter(page, size, country, user?.id);
+            const posts = await this.postDAO.getPostsFilter(page, size, country?.toLowerCase(), user?.id);
             return posts;
 
         } catch (error) {

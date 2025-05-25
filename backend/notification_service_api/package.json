@@ -1,0 +1,36 @@
+{
+  "name": "notification_service_api",
+  "version": "1.0.0",
+  "description": "",
+  "author": "Lahiru De Silva",
+  "main": "index.js",
+  "scripts": {
+    "start": "cross-env ENV=PROD node index.mjs",
+    "dev": "cross-env ENV=DEV nodemon index.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RashmithaDeSilva/TravelTales.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RashmithaDeSilva/TravelTales/issues"
+  },
+  "homepage": "https://github.com/RashmithaDeSilva/TravelTales#readme",
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-validator": "^7.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.14.1",
+    "node-fetch": "^3.3.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "type": "module"
+}

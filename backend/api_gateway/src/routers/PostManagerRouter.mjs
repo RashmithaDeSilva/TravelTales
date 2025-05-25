@@ -137,7 +137,7 @@ const postSerciveApi = `http://${ process.env.POST_SERVICE_API_HOST || '172.20.5
  *                   type: "null"
  *                   example: null
  */
-router.get('/', isAuthenticated, async (req, res) => {
+router.get('/', async (req, res) => {
     let response;
     let responseStatus;
     let responseBody;
@@ -316,7 +316,7 @@ router.get('/', isAuthenticated, async (req, res) => {
  *                   type: "null"
  *                   example: null
  */
-router.get('/find', isAuthenticated, async (req, res) => {
+router.get('/find', async (req, res) => {
     let response;
     let responseStatus;
     let responseBody;

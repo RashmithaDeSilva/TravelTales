@@ -71,7 +71,7 @@ services:
     networks:
       traveltales_network:
         ipv4_address: 172.20.5.153
-    profiles: ["production", "post_api"]
+    profiles: ["production", "error_log_api"]
 
   session_store:
     image: redis:7.4-alpine3.21
@@ -127,6 +127,38 @@ services:
       traveltales_network:
         ipv4_address: 172.20.5.51
     profiles: ["production", "user_api"]
+  
+  post_service_api:
+    image: rashmithadesilva/traveltales_post_service_api:v1
+    container_name: post_service_api
+    restart: unless-stopped
+    working_dir: /app
+    ports:
+      - "4002:4002"
+    depends_on:
+      - post_db
+    env_file:
+      - ./configs/.post_manager_service_api
+    networks:
+      traveltales_network:
+        ipv4_address: 172.20.5.52
+    profiles: ["production", "post_api"]
+
+  notification_service_api:
+    image: rashmithadesilva/traveltales_notification_service_api:v1
+    container_name: notification_service_api
+    restart: unless-stopped
+    working_dir: /app
+    ports:
+      - "4004:4004"
+    depends_on:
+      - notification_db
+    env_file:
+      - ./configs/.notification_service_api
+    networks:
+      traveltales_network:
+        ipv4_address: 172.20.5.51
+    profiles: ["production", "notification_api"]
 
 
   # frontend:

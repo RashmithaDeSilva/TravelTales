@@ -1,6 +1,5 @@
 note.md
 6cosc022w_cw2_2025 Brief.pdf
-README.md
 .env
 configs/
 TravelTales_Configs.zip
@@ -36,42 +35,45 @@ TravelTales_Configs.zip
 
 
 # Frontend --------------------------------------------------------------
-# dependencies
-/frontend/node_modules
-/frontend/.pnp
-/frontend/.pnp.*
-/frontend/.yarn/*
-/frontend/!.yarn/patches
-/frontend/!.yarn/plugins
-/frontend/!.yarn/releases
-/frontend/!.yarn/versions
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
-# testing
-/frontend/coverage
+# Compiled output
+frontend/dist
+frontend/tmp
+frontend/out-tsc
+frontend/bazel-out
 
-# next.js
-/frontend/.next/
-/frontend/out/
+# Node
+frontend/node_modules
+frontend/npm-debug.log
+frontend/yarn-error.log
 
-# production
-/frontend/build
+# IDEs and editors
+frontend/.idea/
+frontend/.project
+frontend/.classpath
+frontend/.c9/
+frontend/*.launch
+frontend/.settings/
+frontend/*.sublime-workspace
 
-# misc
-/frontend/.DS_Store
-/frontend/*.pem
+# Visual Studio Code
+frontend/.vscode/*
+frontend/!.vscode/settings.json
+frontend/!.vscode/tasks.json
+frontend/!.vscode/launch.json
+frontend/!.vscode/extensions.json
+frontend/.history/*
 
-# debug
-/frontend/npm-debug.log*
-/frontend/yarn-debug.log*
-/frontend/yarn-error.log*
-/frontend/.pnpm-debug.log*
+# Miscellaneous
+frontend/.angular/cache
+frontend/.sass-cache/
+frontend/connect.lock
+frontend/coverage
+frontend/libpeerconnection.log
+frontend/testem.log
+frontend/typings
 
-# env files (can opt-in for committing if needed)
-/frontend/.env*
-
-# vercel
-/frontend/.vercel
-
-# typescript
-/frontend/*.tsbuildinfo
-/frontend/next-env.d.ts
+# System files
+frontend/.DS_Store
+frontend/Thumbs.db

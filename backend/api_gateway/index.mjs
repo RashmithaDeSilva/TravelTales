@@ -13,6 +13,7 @@ import tinyCsrf from 'tiny-csrf';
 import ErrorResponse from './src/utils/responses/ErrorResponse.mjs';
 import CsrfTokenErrors from './src/utils/errors/CsrfTokenErrors.mjs';
 import CommonErrors from './src/utils/errors/CommonErrors.mjs';
+import cors from 'cors';
 
 
 // Setup express app
@@ -27,6 +28,9 @@ const ENV = process.env.ENV || 'DEV';
 if (ENV === "DEV") {
     setupSwagger(app);
 }
+
+// Allow all origins
+app.use(cors());
 
 // Middleware
 app.use(express.json());

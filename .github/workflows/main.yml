@@ -74,9 +74,7 @@ jobs:
             ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_api_gateway:latest
       
       - name: Start Docker Compose
-        run: |
-          pwd
-          docker compose --profile api_gateway up -d
+        run: docker compose --profile api_gateway up -d
 
 
       - name: Wait for API to come up
@@ -115,261 +113,258 @@ jobs:
       #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_api_gateway:${{ secrets.API_GATEWAY_VERSION }}
       #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_api_gateway:latest
 
-  # Country_Finder_Service_API_Container_Build_Test_Push:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v4
+  Country_Finder_Service_API_Container_Build_Test_Push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-  #     - name: Log in to Docker Hub
-  #       uses: docker/login-action@v3
-  #       with:
-  #         username: ${{ secrets.DOCKER_USERNAME }}
-  #         password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-  #     - name: Login to GitHub Container Registry
-  #       uses: docker/login-action@v3
-  #       with:
-  #         registry: ghcr.io
-  #         username: ${{ secrets.USERSNAME_GITHUB }}
-  #         password: ${{ secrets.TOKEN_GITHUB }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.USERSNAME_GITHUB }}
+          password: ${{ secrets.TOKEN_GITHUB }}
 
-  #     - name: Build Docker image
-  #       run: |
-  #         cd backend/country_finder_service_api
-  #         docker build -t ${{ secrets.DOCKER_USERNAME }}/traveltales_country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }} .
-  #         docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }} \
-  #           ${{ secrets.DOCKER_USERNAME }}/traveltales_country_finder_service_api:latest
+      - name: Build Docker image
+        run: |
+          cd backend/country_finder_service_api
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/traveltales_country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }} .
+          docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }} \
+            ${{ secrets.DOCKER_USERNAME }}/traveltales_country_finder_service_api:latest
 
-  #     - name: Tag image for Github Container Registry
-  #       run: |
-  #         docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }} \
-  #           ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }}
-  #         docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_country_finder_service_api:latest \
-  #           ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_country_finder_service_api:latest
+      - name: Tag image for Github Container Registry
+        run: |
+          docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }} \
+            ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }}
+          docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_country_finder_service_api:latest \
+            ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_country_finder_service_api:latest
 
-  #     - name: Run Docker container
-  #       run: |
-  #         docker run -d -p 5000:5000 --name temp_container ${{ secrets.DOCKER_USERNAME }}/traveltales_country_finder_service_api:latest
-  #         echo "Waiting for API to be ready..."
-  #         for i in {1..30}; do
-  #           if curl -s http://localhost:5000/status > /dev/null; then
-  #             echo "API is up!"
-  #             break
-  #           fi
-  #           echo "Waiting ($i)..."
-  #           sleep 1
-  #         done
+      - name: Run Docker container
+        run: |
+          docker run -d -p 5000:5000 --name temp_container ${{ secrets.DOCKER_USERNAME }}/traveltales_country_finder_service_api:latest
+          echo "Waiting for API to be ready..."
+          for i in {1..30}; do
+            if curl -s http://localhost:5000/status > /dev/null; then
+              echo "API is up!"
+              break
+            fi
+            echo "Waiting ($i)..."
+            sleep 1
+          done
 
-  #     - name: Run test script
-  #       run: |
-  #         cd backend/country_finder_service_api
-  #         python test.py
+      - name: Run test script
+        run: |
+          cd backend/country_finder_service_api
+          python test.py
 
-  #     - name: Stop and remove container
-  #       run: |
-  #         docker stop temp_container
-  #         docker rm temp_container
+      - name: Stop and remove container
+        run: |
+          docker stop temp_container
+          docker rm temp_container
 
-  #     - name: Upload test results
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: country_finder_service_api_results
-  #         path: backend/country_finder_service_api/results.txt
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: country_finder_service_api_results
+          path: backend/country_finder_service_api/results.txt
 
-  #     # - name: Push Docker image to Docker Hub
-  #     #   run: |
-  #     #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }}
-  #     #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_country_finder_service_api:latest
+      # - name: Push Docker image to Docker Hub
+      #   run: |
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }}
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_country_finder_service_api:latest
 
-  #     # - name: Push Docker image to Github Container Registry
-  #     #   run: |
-  #     #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }}
-  #     #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_country_finder_service_api:latest
+      # - name: Push Docker image to Github Container Registry
+      #   run: |
+      #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }}
+      #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_country_finder_service_api:latest
 
-  # Toxicity_Detection_Service_API_Container_Build_Test_Push:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v4
+  Toxicity_Detection_Service_API_Container_Build_Test_Push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-  #     - name: Log in to Docker Hub
-  #       uses: docker/login-action@v3
-  #       with:
-  #         username: ${{ secrets.DOCKER_USERNAME }}
-  #         password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-  #     - name: Login to GitHub Container Registry
-  #       uses: docker/login-action@v3
-  #       with:
-  #         registry: ghcr.io
-  #         username: ${{ secrets.USERSNAME_GITHUB }}
-  #         password: ${{ secrets.TOKEN_GITHUB }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.USERSNAME_GITHUB }}
+          password: ${{ secrets.TOKEN_GITHUB }}
 
-  #     - name: Build Docker image
-  #       run: |
-  #         cd backend/toxicity_detection_service_api
-  #         docker build -t ${{ secrets.DOCKER_USERNAME }}/traveltales_toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }} .
-  #         docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }} \
-  #           ${{ secrets.DOCKER_USERNAME }}/traveltales_toxicity_detection_service_api:latest
+      - name: Build Docker image
+        run: |
+          cd backend/toxicity_detection_service_api
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/traveltales_toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }} .
+          docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }} \
+            ${{ secrets.DOCKER_USERNAME }}/traveltales_toxicity_detection_service_api:latest
 
-  #     - name: Tag image for Github Container Registry
-  #       run: |
-  #         docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }} \
-  #           ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }}
-  #         docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_toxicity_detection_service_api:latest \
-  #           ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_toxicity_detection_service_api:latest      
+      - name: Tag image for Github Container Registry
+        run: |
+          docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }} \
+            ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }}
+          docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_toxicity_detection_service_api:latest \
+            ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_toxicity_detection_service_api:latest      
 
-  #     - name: Run Docker container
-  #       run: |
-  #         docker run -d -p 5001:5001 --name temp_container ${{ secrets.DOCKER_USERNAME }}/traveltales_toxicity_detection_service_api:latest
-  #         echo "Waiting for API to be ready..."
-  #         for i in {1..30}; do
-  #           if curl -s http://localhost:5001/status > /dev/null; then
-  #             echo "API is up!"
-  #             break
-  #           fi
-  #           echo "Waiting ($i)..."
-  #           sleep 1
-  #         done
+      - name: Run Docker container
+        run: |
+          docker run -d -p 5001:5001 --name temp_container ${{ secrets.DOCKER_USERNAME }}/traveltales_toxicity_detection_service_api:latest
+          echo "Waiting for API to be ready..."
+          for i in {1..30}; do
+            if curl -s http://localhost:5001/status > /dev/null; then
+              echo "API is up!"
+              break
+            fi
+            echo "Waiting ($i)..."
+            sleep 1
+          done
 
-  #     - name: Run test script
-  #       run: |
-  #         cd backend/toxicity_detection_service_api
-  #         python test.py
+      - name: Run test script
+        run: |
+          cd backend/toxicity_detection_service_api
+          python test.py
 
-  #     - name: Stop and remove container
-  #       run: |
-  #         docker stop temp_container
-  #         docker rm temp_container
+      - name: Stop and remove container
+        run: |
+          docker stop temp_container
+          docker rm temp_container
 
-  #     - name: Upload test results
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: toxicity_detection_service_api_results
-  #         path: backend/toxicity_detection_service_api/results.txt
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: toxicity_detection_service_api_results
+          path: backend/toxicity_detection_service_api/results.txt
 
-  #     # - name: Push Docker image to Docker Hub
-  #     #   run: |
-  #     #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }}
-  #     #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_toxicity_detection_service_api:latest
+      # - name: Push Docker image to Docker Hub
+      #   run: |
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }}
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_toxicity_detection_service_api:latest
 
-  #     # - name: Push Docker image to Github Container Registry
-  #     #   run: |
-  #     #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }}
-  #     #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_toxicity_detection_service_api:latest
+      # - name: Push Docker image to Github Container Registry
+      #   run: |
+      #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }}
+      #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_toxicity_detection_service_api:latest
 
-  # User_Service_API_Container_Build_Test_Push:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v4
+  User_Service_API_Container_Build_Test_Push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-  #     - name: Log in to Docker Hub
-  #       uses: docker/login-action@v3
-  #       with:
-  #         username: ${{ secrets.DOCKER_USERNAME }}
-  #         password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-  #     - name: Login to GitHub Container Registry
-  #       uses: docker/login-action@v3
-  #       with:
-  #         registry: ghcr.io
-  #         username: ${{ secrets.USERSNAME_GITHUB }}
-  #         password: ${{ secrets.TOKEN_GITHUB }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.USERSNAME_GITHUB }}
+          password: ${{ secrets.TOKEN_GITHUB }}
 
-  #     - name: Setup configs
-  #       run: |
-  #         gdrive_download() {
-  #           LINK="$1"
-  #           OUTPUT="$2"
+      - name: Setup configs
+        run: |
+          gdrive_download() {
+            LINK="$1"
+            OUTPUT="$2"
 
-  #           if [[ -z "$LINK" || -z "$OUTPUT" ]]; then
-  #             echo "Usage: gdrive_download <google_drive_link> <output_filename>"
-  #             return 1
-  #           fi
+            if [[ -z "$LINK" || -z "$OUTPUT" ]]; then
+              echo "Usage: gdrive_download <google_drive_link> <output_filename>"
+              return 1
+            fi
 
-  #           FILEID=$(echo "$LINK" | grep -oP '(?<=/d/)[^/]+')
-  #           if [[ -z "$FILEID" ]]; then
-  #             echo "Could not extract FILE ID from the link."
-  #             return 1
-  #           fi
+            FILEID=$(echo "$LINK" | grep -oP '(?<=/d/)[^/]+')
+            if [[ -z "$FILEID" ]]; then
+              echo "Could not extract FILE ID from the link."
+              return 1
+            fi
 
-  #           CONFIRM=$(wget --quiet --save-cookies /tmp/cookies.txt \
-  #             --keep-session-cookies --no-check-certificate \
-  #             "https://drive.google.com/uc?export=download&id=${FILEID}" -O- \
-  #             | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1/p')
+            CONFIRM=$(wget --quiet --save-cookies /tmp/cookies.txt \
+              --keep-session-cookies --no-check-certificate \
+              "https://drive.google.com/uc?export=download&id=${FILEID}" -O- \
+              | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1/p')
 
-  #           wget --load-cookies /tmp/cookies.txt \
-  #             "https://drive.google.com/uc?export=download&confirm=${CONFIRM}&id=${FILEID}" \
-  #             -O "$OUTPUT"
+            wget --load-cookies /tmp/cookies.txt \
+              "https://drive.google.com/uc?export=download&confirm=${CONFIRM}&id=${FILEID}" \
+              -O "$OUTPUT"
 
-  #           rm -f /tmp/cookies.txt
-  #         }
-  #         gdrive_download "${{ secrets.CONFIG_DOWNLOAD_LINK }}" TravelTales_Configs.zip
-  #         unzip TravelTales_Configs.zip
+            rm -f /tmp/cookies.txt
+          }
+          gdrive_download "${{ secrets.CONFIG_DOWNLOAD_LINK }}" TravelTales_Configs.zip
+          unzip TravelTales_Configs.zip
 
-  #     - name: Build Docker image
-  #       run: |
-  #         cd backend/user_service_api
-  #         docker build -t ${{ secrets.DOCKER_USERNAME }}/traveltales_user_service_api:${{ secrets.USER_SERVICE_API_VERSION }} .
-  #         docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_user_service_api:${{ secrets.USER_SERVICE_API_VERSION }} \
-  #           ${{ secrets.DOCKER_USERNAME }}/traveltales_user_service_api:latest
+      - name: Build Docker image
+        run: |
+          cd backend/user_service_api
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/traveltales_user_service_api:${{ secrets.USER_SERVICE_API_VERSION }} .
+          docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_user_service_api:${{ secrets.USER_SERVICE_API_VERSION }} \
+            ${{ secrets.DOCKER_USERNAME }}/traveltales_user_service_api:latest
 
-  #     - name: Tag image for Github Container Registry
-  #       run: |
-  #         docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_user_service_api:${{ secrets.USER_SERVICE_API_VERSION }} \
-  #           ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_user_service_api:${{ secrets.USER_SERVICE_API_VERSION }}
-  #         docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_user_service_api:latest \
-  #           ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_user_service_api:latest
+      - name: Tag image for Github Container Registry
+        run: |
+          docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_user_service_api:${{ secrets.USER_SERVICE_API_VERSION }} \
+            ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_user_service_api:${{ secrets.USER_SERVICE_API_VERSION }}
+          docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_user_service_api:latest \
+            ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_user_service_api:latest
       
-  #     - name: Start Docker Compose
-  #       run: |
-  #         cd ..
-  #         cd ..
-  #         docker compose --profile api_gateway up -d
+      - name: Start Docker Compose
+        run: docker compose --profile api_gateway up -d
 
-  #     - name: Wait for API to come up
-  #       run: |
-  #         for i in {1..30}; do
-  #           if curl -s http://localhost:4001/api/${{ secrets.USER_SERVICE_API_VERSION }}/status > /dev/null; then
-  #             echo "User Service API is up!"
-  #             exit 0
-  #           fi
-  #           echo "waiting ($i/30)…"
-  #           sleep 1
-  #         done
-  #         echo "User Service API never became ready" >&2
-  #         exit 1
+      - name: Wait for API to come up
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:4001/api/${{ secrets.USER_SERVICE_API_VERSION }}/status > /dev/null; then
+              echo "User Service API is up!"
+              exit 0
+            fi
+            echo "waiting ($i/30)…"
+            sleep 1
+          done
+          echo "User Service API never became ready" >&2
+          exit 1
 
-  #     # - name: Run test script
-  #     #   run: |
-  #     #     cd backend/user_service_api
+      # - name: Run test script
+      #   run: |
+      #     cd backend/user_service_api
 
-  #     - name: Stop Docker Compose
-  #       run: docker compose down
+      - name: Stop Docker Compose
+        run: docker compose down
 
-  #     # - name: Upload test results
-  #     #   uses: actions/upload-artifact@v4
-  #     #   with:
-  #     #     name: user_service_api_results
-  #     #     path: backend/user_service_api/results.txt
+      # - name: Upload test results
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: user_service_api_results
+      #     path: backend/user_service_api/results.txt
 
-  #     # - name: Push Docker image to Docker Hub
-  #     #   run: |
-  #     #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_user_service_api:${{ secrets.USER_SERVICE_API_VERSION }}
-  #     #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_user_service_api:latest
+      # - name: Push Docker image to Docker Hub
+      #   run: |
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_user_service_api:${{ secrets.USER_SERVICE_API_VERSION }}
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_user_service_api:latest
 
-  #     # - name: Push Docker image to Github Container Registry
-  #     #   run: |
-  #     #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_user_service_api:${{ secrets.USER_SERVICE_API_VERSION }}
-  #     #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_user_service_api:latest
+      # - name: Push Docker image to Github Container Registry
+      #   run: |
+      #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_user_service_api:${{ secrets.USER_SERVICE_API_VERSION }}
+      #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_user_service_api:latest

@@ -7,8 +7,136 @@ import StandardResponse from '../utils/responses/StandardResponse.mjs';
 
 dotenv.config();
 const router = Router();
-const userServiceApi = `http://${ process.env.USER_SERVICE_API_HOST }:${ process.env.USER_SERVICE_API_PORT }/api/${ process.env.USER_SERVICE_API_VERSION }/auth/user`;
+const userServiceApi = `http://${ process.env.USER_SERVICE_API_HOST || '172.20.5.51' }:${ process.env.USER_SERVICE_API_PORT || 4001 }/api/${ process.env.USER_SERVICE_API_VERSION || 'v1' }/auth/user`;
 
+
+/**
+ * @swagger
+ * /api/v1/auth/user/find:
+ *   post:
+ *     summary: Find users by username or user IDs
+ *     description: Retrieves users by username or user ID list from the request body. At least one must be provided.
+ *     tags:
+ *       - User
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               _csrf:
+ *                 type: string
+ *                 example: 5c325207-aa6f-42d9-80f7-284df562bcca
+ *                 description: New csrf token
+ *               user_name:
+ *                 type: string
+ *                 description: The username to search for
+ *                 example: "john_doe"
+ *               ids:
+ *                 type: array
+ *                 description: Array of user IDs to search for
+ *                 items:
+ *                   type: integer
+ *                 example: [1, 2, 3]
+ *             oneOf:
+ *               - required: [user_name]
+ *               - required: [ids]
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved user(s).
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "User info."
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "123e4567-e89b-12d3-a456-426614174000"
+ *                       user_name:
+ *                         type: string
+ *                         example: "john_doe"
+ *                       email:
+ *                         type: string
+ *                         example: "john@example.com"
+ *                 errors:
+ *                   type: "null"
+ *                   example: null
+ *       400:
+ *         description: Validation error (e.g., neither user_name nor ids provided)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Validation error"
+ *                 data:
+ *                   type: "null"
+ *                   example: null
+ *                 errors:
+ *                   type: object
+ *                   example:
+ *                     message: "At least one of user_name or ids must be provided"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ *                 data:
+ *                   type: "null"
+ *                   example: null
+ *                 errors:
+ *                   type: "null"
+ *                   example: null
+ */
+router.post('/find', async (req, res) => {
+    let response;
+    let responseStatus;
+    let responseBody;
+    try {
+        response = await fetch(`${ userServiceApi }/find`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(req.body),
+        });
+        responseStatus = response.status;
+        responseBody = await response.json();
+        return res.status(responseStatus).send(responseBody);
+
+    } catch (error) {
+        return await ErrorResponse(error, res, '/user/find', {
+            "requestData": req.body,
+            "responseStatus": responseStatus,
+            "responseBody": responseBody,
+        });
+    }
+});
 
 /**
  * @swagger
@@ -107,7 +235,6 @@ router.get('/info', isAuthenticated, async (req, res) => {
 
     } catch (error) {
         return await ErrorResponse(error, res, '/user/info', {
-            "response": response,
             "responseStatus": responseStatus,
             "responseBody": responseBody,
         });
@@ -264,7 +391,6 @@ router.put('/update', isAuthenticated, async (req, res) => {
     } catch (error) {
         return await ErrorResponse(error, res, '/user/update', {
             "requestData": req.body,
-            "response": response,
             "responseStatus": responseStatus,
             "responseBody": responseBody,
         });
@@ -439,7 +565,6 @@ router.patch('/changepassword', isAuthenticated, async (req, res) => {
     } catch (error) {
         return await ErrorResponse(error, res, '/user/changepassword', {
             "requestData": req.body,
-            "response": response,
             "responseStatus": responseStatus,
             "responseBody": responseBody,
         });
@@ -628,7 +753,6 @@ router.get('/followers&followed', isAuthenticated, async (req, res) => {
 
     } catch (error) {
         return await ErrorResponse(error, res, '/user/followers&followed', {
-            "response": response,
             "responseStatus": responseStatus,
             "responseBody": responseBody,
         });
@@ -786,7 +910,6 @@ router.post('/follow', isAuthenticated, async (req, res) => {
     } catch (error) {
         return await ErrorResponse(error, res, '/user/follow', {
             "requestData": req.body,
-            "response": response,
             "responseStatus": responseStatus,
             "responseBody": responseBody,
         });
@@ -944,7 +1067,6 @@ router.delete('/unfollow', isAuthenticated, async (req, res) => {
     } catch (error) {
         return await ErrorResponse(error, res, '/user/unfollow', {
             "requestData": req.body,
-            "response": response,
             "responseStatus": responseStatus,
             "responseBody": responseBody,
         });

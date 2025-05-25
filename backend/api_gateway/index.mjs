@@ -67,7 +67,6 @@ app.use(tinyCsrf(
     ['POST', 'PUT', 'PATCH', 'DELETE'], // HTTP methods to protect
     // URL paths to exclude from CSRF protection
     [
-        `/api/${ API_VERSION }/status`,
         `/api/${ API_VERSION }/auth/login`,
         `/api/${ API_VERSION }/auth/register`
     ], 

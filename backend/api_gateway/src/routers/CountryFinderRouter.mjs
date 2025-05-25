@@ -8,7 +8,7 @@ import CountryFinderErrors from '../utils/errors/CountryFinderErrors.mjs';
 
 dotenv.config();
 const router = Router();
-const countryFinderServiceApi = `http://${ process.env.COUNTRY_FINDER_SERVICE_API_HOST }:${ process.env.COUNTRY_FINDER_SERVICE_API_PORT }`;
+const countryFinderServiceApi = `http://${ process.env.COUNTRY_FINDER_SERVICE_API_HOST || '172.20.5.100' }:${ process.env.COUNTRY_FINDER_SERVICE_API_PORT || 5000 }`;
 
 
 /**

@@ -3,7 +3,7 @@ name: Docker CI Pipeline
 on:
   push:
     branches:
-      - main
+      - post_manager_api
 
 jobs:
   API_Gateway_Container_Build_Test_Push:
@@ -15,72 +15,97 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ secrets.USERSNAME_GITHUB }}
-          password: ${{ secrets.TOKEN_GITHUB }}
-
-      - name: Build Docker image
+      - name: test
         run: |
-          cd backend/api_gateway
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/traveltales_api_gateway:${{ secrets.API_GATEWAY_VERSION }} .
-          docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_api_gateway:${{ secrets.API_GATEWAY_VERSION }} \
-            ${{ secrets.DOCKER_USERNAME }}/traveltales_api_gateway:latest
-          
-      - name: Tag image for Github Container Registry
-        run: |
-          docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_api_gateway:${{ secrets.API_GATEWAY_VERSION }} \
-            ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_api_gateway:${{ secrets.API_GATEWAY_VERSION }}
-          docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_api_gateway:latest \
-            ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_api_gateway:latest
+          ls -al
+          echo "***********************************************"
+          pwd
+          echo "***********************************************"
+          ls
 
-      - name: Recreate .env
-        run: |
-          cd backend/api_gateway
-          cat <<EOF > .env
-          MYSQL_HOST=172.20.5.10
-          REDIS_HOST=172.20.5.11
-          EOF
-          cd ..
-          cd user_service_api
-          touch .env
-      
-      - name: Start Docker Compose
-        run: docker compose --profile api_gateway up -d
+      # - name: Log in to Docker Hub
+      #   uses: docker/login-action@v3
+      #   with:
+      #     username: ${{ secrets.DOCKER_USERNAME }}
+      #     password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Wait for API to come up
-        run: |
-          for i in {1..30}; do
-            if curl -s http://localhost:3001/api/${{ secrets.API_GATEWAY_VERSION }}/status > /dev/null; then
-              echo "API Gateway is up!"
-              exit 0
-            fi
-            echo "waiting ($i/30)…"
-            sleep 1
-          done
-          echo "API Gateway never became ready" >&2
-          exit 1
+      # - name: Login to GitHub Container Registry
+      #   uses: docker/login-action@v3
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ secrets.USERSNAME_GITHUB }}
+      #     password: ${{ secrets.TOKEN_GITHUB }}
 
-      # - name: Run test script
+      # - name: Build Docker image
       #   run: |
       #     cd backend/api_gateway
+      #     docker build -t ${{ secrets.DOCKER_USERNAME }}/traveltales_api_gateway:${{ secrets.API_GATEWAY_VERSION }} .
+      #     docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_api_gateway:${{ secrets.API_GATEWAY_VERSION }} \
+      #       ${{ secrets.DOCKER_USERNAME }}/traveltales_api_gateway:latest
+          
+      # - name: Tag image for Github Container Registry
+      #   run: |
+      #     docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_api_gateway:${{ secrets.API_GATEWAY_VERSION }} \
+      #       ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_api_gateway:${{ secrets.API_GATEWAY_VERSION }}
+      #     docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_api_gateway:latest \
+      #       ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_api_gateway:latest
 
-      - name: Stop Docker Compose
-        run: docker compose down
+      # - name: Recreate .env
+      #   run: |
+      #     cat <<EOF > .env
+      #     MYSQL_ROOT_PASSWORD=12345
+      #     MYSQL_IP=172.20.5.100
+      #     REDIS_IP=172.20.5.140
+      #     API_GATEWAY_IP=172.20.5.20
 
-      # - name: Upload test results
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: api_gateway_results
-      #     path: backend/api_gateway/results.txt
+      #     MYSQL_PORT=3306
+      #     REDIS_PORT=6379
+      #     API_GATEWAY_PORT=4000
+      #     USER_SERVICE_PORT=4001
+      #     EOF
+      #     cd ..
+      #     cd user_service_api
+      #     touch .env
+
+      # - name: Recreate .env
+      #   run: |
+      #     cd backend/api_gateway
+      #     cat <<EOF > .env
+      #     MYSQL_HOST=172.20.5.100
+      #     REDIS_HOST=172.20.5.140
+      #     EOF
+      #     cd ..
+      #     cd user_service_api
+      #     touch .env
+      
+      # - name: Start Docker Compose
+      #   run: docker compose --profile dev up -d
+
+      # - name: Wait for API to come up
+      #   run: |
+      #     for i in {1..30}; do
+      #       if curl -s http://localhost:4000/api/${{ secrets.API_GATEWAY_VERSION }}/status > /dev/null; then
+      #         echo "API Gateway is up!"
+      #         exit 0
+      #       fi
+      #       echo "waiting ($i/30)…"
+      #       sleep 1
+      #     done
+      #     echo "API Gateway never became ready" >&2
+      #     exit 1
+
+      # # - name: Run test script
+      # #   run: |
+      # #     cd backend/api_gateway
+
+      # - name: Stop Docker Compose
+      #   run: docker compose --profile dev down
+
+      # # - name: Upload test results
+      # #   uses: actions/upload-artifact@v4
+      # #   with:
+      # #     name: api_gateway_results
+      # #     path: backend/api_gateway/results.txt
 
       # - name: Push Docker image to Docker Hub
       #   run: |
@@ -295,7 +320,7 @@ jobs:
       - name: Wait for API to come up
         run: |
           for i in {1..30}; do
-            if curl -s http://localhost:3002/api/${{ secrets.USER_SERVICE_API_VERSION }}/status > /dev/null; then
+            if curl -s http://localhost:3001/api/${{ secrets.USER_SERVICE_API_VERSION }}/status > /dev/null; then
               echo "User Service API is up!"
               exit 0
             fi

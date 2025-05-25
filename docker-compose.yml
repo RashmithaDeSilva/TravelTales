@@ -71,7 +71,7 @@ services:
     networks:
       traveltales_network:
         ipv4_address: 172.20.5.153
-    profiles: ["production", "post_api"]
+    profiles: ["production", "error_log_api"]
 
   session_store:
     image: redis:7.4-alpine3.21

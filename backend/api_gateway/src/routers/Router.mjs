@@ -7,17 +7,19 @@ import CountryFinderRouter from './CountryFinderRouter.mjs';
 import ToxicityDetectionRouter from './ToxicityDetectionRouter.mjs';
 import PostManagerRouter from './PostManagerRouter.mjs';
 import NotificationRouter from './NotificationRouter.mjs';
+import RestCountriesRouter from './RestCountriesRouter.mjs';
 
 
 dotenv.config();
 const API_VERSION = process.env.API_VERSION || 'v1';
 const router = Router();
 router.use('/auth/', UserAuthRouter);
-router.use('/auth/findecountry', CountryFinderRouter);
-router.use('/auth/toxicitydetection', ToxicityDetectionRouter);
 router.use('/auth/user', UserRouter);
 router.use('/auth/post', PostManagerRouter);
+router.use('/auth/restcountry', RestCountriesRouter);
 router.use('/auth/notification', NotificationRouter);
+router.use('/auth/findecountry', CountryFinderRouter);
+router.use('/auth/toxicitydetection', ToxicityDetectionRouter);
 
 
 /**

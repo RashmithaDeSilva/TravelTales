@@ -59,7 +59,7 @@ jobs:
           gdrive_download "${{ secrets.CONFIG_DOWNLOAD_LINK }}" TravelTales_Configs.zip
           unzip TravelTales_Configs.zip
           ls -al
-          ls ./TravelTales_Configs -al
+          ls ./configs -al
 
   #     - name: Build Docker image
   #       run: |

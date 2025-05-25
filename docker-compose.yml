@@ -144,6 +144,22 @@ services:
         ipv4_address: 172.20.5.52
     profiles: ["production", "post_api"]
 
+  rest_countries_service_api:
+    image: rashmithadesilva/traveltales_rest_countries_service_api:v1
+    container_name: rest_countries_service_api
+    restart: unless-stopped
+    working_dir: /app
+    ports:
+      - "4003:4003"
+    depends_on:
+      - cach_store
+    env_file:
+      - ./configs/.rest_countries_service_api
+    networks:
+      traveltales_network:
+        ipv4_address: 172.20.5.53
+    profiles: ["production", "rest_countries_api"]
+
   notification_service_api:
     image: rashmithadesilva/traveltales_notification_service_api:v1
     container_name: notification_service_api

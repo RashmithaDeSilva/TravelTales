@@ -1,6 +1,6 @@
 class UserModel {
 
-    constructor (userName, firstName, surname, email,  contactNumber, passwordHash = null, id = null, email_verify = false) {
+    constructor (userName, firstName, surname, email, contactNumber, passwordHash = null, id = null, email_verify = false) {
         this.userName = userName;
         this.firstName = firstName;
         this.surname = surname;
@@ -19,6 +19,10 @@ class UserModel {
     // Creating response model with id
     static getResponseUserModel(userName, firstName, surname, email, contactNumber, id) {
         return new UserModel(userName, firstName, surname, email, contactNumber, null, id);
+    }
+
+    static getResponseUserModelPublic(userName, email, id) {
+        return new UserModel(userName, null, null, email, null, null, id, null);
     }
 }
 

@@ -19,7 +19,7 @@ RUN addgroup -S app && adduser -S app -G app
 USER app
 
 # Expose the app's port
-EXPOSE 3003
+EXPOSE 4002
 
 # Define the default command to run your app
 CMD ["npm", "run", "start"]

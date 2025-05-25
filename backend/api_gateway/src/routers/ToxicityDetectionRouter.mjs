@@ -8,7 +8,7 @@ import ToxicityDetectionErrors from '../utils/errors/ToxicityDetectionErrors.mjs
 
 dotenv.config();
 const router = Router();
-const toxicityDetectionServiceApi = `http://${ process.env.TOXICITY_DETECTION_SERVICE_API_HOST }:${ process.env.TOXICITY_DETECTION_SERVICE_API_PORT }`;
+const toxicityDetectionServiceApi = `http://${ process.env.TOXICITY_DETECTION_SERVICE_API_HOST || '172.20.5.101' }:${ process.env.TOXICITY_DETECTION_SERVICE_API_PORT || 5001 }`;
 
 
 /**

@@ -13,13 +13,17 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(100) UNIQUE NOT NULL,
     email_verify BOOLEAN DEFAULT FALSE,
     contact_number VARCHAR(20),
-    password_hash VARCHAR(255) NOT NULL
+    password_hash VARCHAR(255) NOT NULL,
+    is_active BOOLEAN DEFAULT FALSE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- Follows table
 CREATE TABLE IF NOT EXISTS follows (
     follower_id INT NOT NULL,
     followed_id INT NOT NULL,
+    followed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (follower_id, followed_id),
     FOREIGN KEY (follower_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (followed_id) REFERENCES users(id) ON DELETE CASCADE

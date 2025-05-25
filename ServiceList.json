@@ -1,0 +1,74 @@
+{
+    "frontend": {
+        "ip": "172.20.5.10",
+        "port": 7000
+    },
+
+
+    "api_gateway": {
+        "ip": "172.20.5.50",
+        "port": 4000
+    },
+    "user_service_api": {
+        "ip": "172.20.5.51",
+        "port": 4001
+    },
+    "post_manager_service_api": {
+        "ip": "172.20.5.52",
+        "port": 4002
+    },
+    "rest_countries_service_api": {
+        "ip": "172.20.5.53",
+        "port": 4003
+    },
+    "notification_service_api": {
+        "ip": "172.20.5.54",
+        "port": 4004
+    },
+    "error_log_service_api": {
+        "ip": "172.20.5.55",
+        "port": 4005
+    },
+    "email_service_api": {
+        "ip": "172.20.5.56",
+        "port": 4006
+    },
+
+
+    "country_finder_service_api": {
+        "ip": "172.20.5.100",
+        "port": 5000
+    },
+    "toxicity_detection_service_api": {
+        "ip": "172.20.5.101",
+        "port": 5001
+    },
+
+
+    "user_database": {
+        "ip": "172.20.5.150",
+        "port": 3306
+    },
+    "post_database": {
+        "ip": "172.20.5.151",
+        "port": 3306
+    },
+    "notification_database": {
+        "ip": "172.20.5.152",
+        "port": 3306
+    },
+    "error_log_database": {
+        "ip": "172.20.5.153",
+        "port": 3306
+    },
+
+
+    "session_store": {
+        "ip": "172.20.5.200",
+        "port": 6379
+    },
+    "cach_store": {
+        "ip": "172.20.5.201",
+        "port": 6379
+    }
+}

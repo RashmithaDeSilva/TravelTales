@@ -1,7 +1,6 @@
 import UserDAO from '../DAOs/UserDAO.mjs';
 import UserModel from '../models/UserModel.mjs';
 import { generateHash, verify } from '../utils/security/Hash.mjs';
-import DatabaseErrors from '../utils/errors/DatabaseErrors.mjs';
 import dotenv from 'dotenv';
 import HashErrors from '../utils/errors/HashErrors.mjs';
 
@@ -66,8 +65,29 @@ class UserService {
     async getUserById(id) {
         try {
             const user = await this.userDAO.getUserById(id);
-            if (!user) throw new Error(DatabaseErrors.USER_NOT_FOUND);
             return user;
+            
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Get user using user name
+    async getUserByUserName(userName) {
+        try {
+            const user = await this.userDAO.getUserByUserName(userName);
+            return user;
+            
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Get users using ids
+    async getUserByUserIds(ids) {
+        try {
+            const result = await this.userDAO.getUserByUserIds(ids);
+            return result;
             
         } catch (error) {
             throw error;

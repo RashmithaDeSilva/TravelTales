@@ -7,7 +7,7 @@ import { fileURLToPath } from "url";
 import path from "path";
 
 dotenv.config();
-const MYSQL_DB_HOST = process.env.MYSQL_DB_HOST || "172.20.5.10";
+const MYSQL_DB_HOST = process.env.MYSQL_DB_HOST || "172.20.5.100";
 const MYSQL_DB_USER = process.env.MYSQL_DB_USER || "root";
 const MYSQL_DB_PASSWORD = process.env.MYSQL_DB_PASSWORD || "12345";
 const DB_NAME = process.env.DB_NAME || "user_database";

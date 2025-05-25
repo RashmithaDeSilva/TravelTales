@@ -12,13 +12,16 @@ import cookieParser from 'cookie-parser';
 import tinyCsrf from 'tiny-csrf';
 import ErrorResponse from './src/utils/responses/ErrorResponse.mjs';
 import CsrfTokenErrors from './src/utils/errors/CsrfTokenErrors.mjs';
+import CommonErrors from './src/utils/errors/CommonErrors.mjs';
+
 
 // Setup express app
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 4000;
 const API_VERSION = process.env.API_VERSION || 'v1';
 const ENV = process.env.ENV || 'DEV';
+
 
 // Swagger setup
 if (ENV === "DEV") {
@@ -27,6 +30,14 @@ if (ENV === "DEV") {
 
 // Middleware
 app.use(express.json());
+
+// Handle bad JSON
+app.use(async (err, req, res, next) => {
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+        return await ErrorResponse(new Error(CommonErrors.INVALID_JSON_FORMAT), res);
+    }
+    next(err); // forward to other error handlers
+});
 
 // Cookie setup
 app.use(cookieParser(process.env.COOKIE_SECRET || 'argon2id19553bnfppLSoqliLt1QIXlA'));
@@ -56,7 +67,6 @@ app.use(tinyCsrf(
     ['POST', 'PUT', 'PATCH', 'DELETE'], // HTTP methods to protect
     // URL paths to exclude from CSRF protection
     [
-        `/api/${ API_VERSION }/status`,
         `/api/${ API_VERSION }/auth/login`,
         `/api/${ API_VERSION }/auth/register`
     ], 
@@ -64,15 +74,50 @@ app.use(tinyCsrf(
 ));
 
 // Error handling for CSRF
-app.use((err, req, res, next) => {
+app.use(async (err, req, res, next) => {
     if (err.message === `Did not get a valid CSRF token for '${req.method} ${req.originalUrl}': ${req.body?._csrf} v. ${req.signedCookies.csrfToken}`) {
-      return ErrorResponse(new Error(CsrfTokenErrors.INVALID_CSRF_TOKEN), res);
+      return await ErrorResponse(new Error(CsrfTokenErrors.INVALID_CSRF_TOKEN), res);
     }
     next(err);
 });
   
 // Routers setup
 app.use(`/api/${ API_VERSION }/`, router);
+
+/**
+ * @swagger
+ * /api/v1/{any}:
+ *   all:
+ *     summary: Invalid endpoint
+ *     description: Handles all undefined routes and returns a 404 error.
+ *     parameters:
+ *       - in: path
+ *         name: any
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Any undefined route
+ *     responses:
+ *       404:
+ *         description: Not Found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Not Found !"
+ *                 redirect:
+ *                   type: string
+ *                   example: "Invalid endpoint, redirect to '/api/v1'"
+ */
+app.use(async (req, res, next) => {
+  return await ErrorResponse(new Error(CommonErrors.NOT_FOUND), res);
+});
 
 app.listen(PORT, ()=>{
     log(LogTypes.INFO, `Server is running on http://localhost:${ PORT }`);

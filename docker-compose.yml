@@ -1,4 +1,4 @@
-# version: '3.9'
+version: '3.9'
 
 networks:
   traveltales_network:
@@ -8,29 +8,92 @@ networks:
         - subnet: 172.20.5.0/24
 
 services:
-  mysql:
+  user_db:
     image: mysql
-    container_name: mysql_database
+    container_name: user_db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: user_database
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: appuserpassword
     ports:
       - "3306:3306"
     networks:
       traveltales_network:
-        ipv4_address: 172.20.5.10
-    profiles: ["all", "user_api", "api_gateway"]
+        ipv4_address: 172.20.5.150
+    profiles: ["production", "user_api", "api_gateway"]
 
-  redis:
+  post_db:
+    image: mysql
+    container_name: post_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: post_database
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: appuserpassword
+    ports:
+      - "3306:3306"
+    networks:
+      traveltales_network:
+        ipv4_address: 172.20.5.151
+    profiles: ["production", "post_api"]
+
+  notification_db:
+    image: mysql
+    container_name: notification_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: notification_database
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: appuserpassword
+    ports:
+      - "3306:3306"
+    networks:
+      traveltales_network:
+        ipv4_address: 172.20.5.152
+    command: --event-scheduler=ON  # Enables Event Scheduler
+    profiles: ["production", "notification_api"]
+
+  error_log_db:
+    image: mysql
+    container_name: error_log_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: error_log_database
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: appuserpassword
+    ports:
+      - "3306:3306"
+    networks:
+      traveltales_network:
+        ipv4_address: 172.20.5.153
+    profiles: ["production", "post_api"]
+
+  session_store:
     image: redis:7.4-alpine3.21
-    container_name: redis_database
+    container_name: session_store
     restart: unless-stopped
     ports:
       - "6379:6379"
     networks:
       traveltales_network:
-        ipv4_address: 172.20.5.11
-    profiles: ["all", "user_api", "api_gateway"]
+        ipv4_address: 172.20.5.200
+    profiles: ["production", "user_api", "api_gateway"]
+  
+  cach_store:
+    image: redis:7.4-alpine3.21
+    container_name: cach_store
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      traveltales_network:
+        ipv4_address: 172.20.5.201
+    profiles: ["production", "rest_countries_api"]
 
   api_gateway:
     image: rashmithadesilva/traveltales_api_gateway:v1
@@ -38,16 +101,16 @@ services:
     restart: unless-stopped
     working_dir: /app
     ports:
-      - "3001:3001"
+      - "4000:4000"
     depends_on:
-      - mysql
-      - redis
+      - user_db
+      - session_store
     env_file:
-      - ./backend/api_gateway/.env
+      - ./configs/.api_gateway
     networks:
       traveltales_network:
-        ipv4_address: 172.20.5.20
-    profiles: ["all", "api_gateway"]
+        ipv4_address: 172.20.5.50
+    profiles: ["production", "api_gateway"]
 
   user_service_api:
     image: rashmithadesilva/traveltales_user_service_api:v1
@@ -55,16 +118,15 @@ services:
     restart: unless-stopped
     working_dir: /app
     ports:
-      - "3002:3002"
+      - "4001:4001"
     depends_on:
-      - mysql
-      - redis
+      - user_db
     env_file:
-      - ./backend/user_service_api/.env
+      - ./configs/.user_service_api
     networks:
       traveltales_network:
-        ipv4_address: 172.20.5.21
-    profiles: ["all", "user_api"]
+        ipv4_address: 172.20.5.51
+    profiles: ["production", "user_api"]
 
 
   # frontend:

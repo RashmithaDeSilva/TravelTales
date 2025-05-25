@@ -1,6 +1,8 @@
 note.md
 6cosc022w_cw2_2025 Brief.pdf
 README.md
+.env
+configs/
 
 
 # Backend ---------------------------------------------------------------
@@ -12,6 +14,15 @@ README.md
 
 /backend/post_manager_service_api/node_modules/
 /backend/post_manager_service_api/.env
+
+/backend/rest_countries_service_api/node_modules/
+/backend/rest_countries_service_api/.env
+
+/backend/notification_service_api/node_modules/
+/backend/notification_service_api/.env
+
+/backend/error_log_service_api/node_modules/
+/backend/error_log_service_api/.env
 
 /backend/country_finder_service_api/env/
 /backend/country_finder_service_api/hf_cache/

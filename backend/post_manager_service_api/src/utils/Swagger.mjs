@@ -12,9 +12,9 @@ const options = {
             version: '1.0.0',
             description: 'API documentation for Express API with Mysql runing on Production mode with Swagger in an ECMAScript Module project.'
         },
-        servers: [{ url: `http://localhost:${ process.env.PORT || 3003 }` }],
+        servers: [{ url: `http://localhost:${ process.env.PORT || 4002 }` }],
     },
-    apis: ['./src/routers/*.mjs']
+    apis: ['./src/routers/*.mjs', './index.mjs']
 };
 
 const swaggerSpec = swaggerJSDoc(options);

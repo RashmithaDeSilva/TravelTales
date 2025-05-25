@@ -28,6 +28,37 @@ jobs:
           username: ${{ secrets.USERSNAME_GITHUB }}
           password: ${{ secrets.TOKEN_GITHUB }}
 
+      - name: Setup configs
+        run: |
+          gdrive_download() {
+            LINK="$1"
+            OUTPUT="$2"
+
+            if [[ -z "$LINK" || -z "$OUTPUT" ]]; then
+              echo "Usage: gdrive_download <google_drive_link> <output_filename>"
+              return 1
+            fi
+
+            FILEID=$(echo "$LINK" | grep -oP '(?<=/d/)[^/]+')
+            if [[ -z "$FILEID" ]]; then
+              echo "Could not extract FILE ID from the link."
+              return 1
+            fi
+
+            CONFIRM=$(wget --quiet --save-cookies /tmp/cookies.txt \
+              --keep-session-cookies --no-check-certificate \
+              "https://drive.google.com/uc?export=download&id=${FILEID}" -O- \
+              | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1/p')
+
+            wget --load-cookies /tmp/cookies.txt \
+              "https://drive.google.com/uc?export=download&confirm=${CONFIRM}&id=${FILEID}" \
+              -O "$OUTPUT"
+
+            rm -f /tmp/cookies.txt
+          }
+          gdrive_download "${{ secrets.CONFIG_DOWNLOAD_LINK }}" TravelTales_Configs.zip
+          unzip TravelTales_Configs.zip
+
       - name: Build Docker image
         run: |
           cd backend/api_gateway
@@ -41,25 +72,15 @@ jobs:
             ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_api_gateway:${{ secrets.API_GATEWAY_VERSION }}
           docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_api_gateway:latest \
             ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_api_gateway:latest
-
-      - name: Recreate .env
-        run: |
-          cd backend/api_gateway
-          cat <<EOF > .env
-          MYSQL_HOST=172.20.5.10
-          REDIS_HOST=172.20.5.11
-          EOF
-          cd ..
-          cd user_service_api
-          touch .env
       
       - name: Start Docker Compose
         run: docker compose --profile api_gateway up -d
 
+
       - name: Wait for API to come up
         run: |
           for i in {1..30}; do
-            if curl -s http://localhost:3001/api/${{ secrets.API_GATEWAY_VERSION }}/status > /dev/null; then
+            if curl -s http://localhost:4000/api/${{ secrets.API_GATEWAY_VERSION }}/status > /dev/null; then
               echo "API Gateway is up!"
               exit 0
             fi
@@ -74,7 +95,7 @@ jobs:
       #     cd backend/api_gateway
 
       - name: Stop Docker Compose
-        run: docker compose down
+        run: docker compose --profile dev down
 
       # - name: Upload test results
       #   uses: actions/upload-artifact@v4
@@ -264,6 +285,37 @@ jobs:
           username: ${{ secrets.USERSNAME_GITHUB }}
           password: ${{ secrets.TOKEN_GITHUB }}
 
+      - name: Setup configs
+        run: |
+          gdrive_download() {
+            LINK="$1"
+            OUTPUT="$2"
+
+            if [[ -z "$LINK" || -z "$OUTPUT" ]]; then
+              echo "Usage: gdrive_download <google_drive_link> <output_filename>"
+              return 1
+            fi
+
+            FILEID=$(echo "$LINK" | grep -oP '(?<=/d/)[^/]+')
+            if [[ -z "$FILEID" ]]; then
+              echo "Could not extract FILE ID from the link."
+              return 1
+            fi
+
+            CONFIRM=$(wget --quiet --save-cookies /tmp/cookies.txt \
+              --keep-session-cookies --no-check-certificate \
+              "https://drive.google.com/uc?export=download&id=${FILEID}" -O- \
+              | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1/p')
+
+            wget --load-cookies /tmp/cookies.txt \
+              "https://drive.google.com/uc?export=download&confirm=${CONFIRM}&id=${FILEID}" \
+              -O "$OUTPUT"
+
+            rm -f /tmp/cookies.txt
+          }
+          gdrive_download "${{ secrets.CONFIG_DOWNLOAD_LINK }}" TravelTales_Configs.zip
+          unzip TravelTales_Configs.zip
+
       - name: Build Docker image
         run: |
           cd backend/user_service_api
@@ -277,25 +329,14 @@ jobs:
             ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_user_service_api:${{ secrets.USER_SERVICE_API_VERSION }}
           docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_user_service_api:latest \
             ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_user_service_api:latest
-
-      - name: Recreate .env
-        run: |
-          cd backend/user_service_api
-          cat <<EOF > .env
-          MYSQL_HOST=172.20.5.10
-          REDIS_HOST=172.20.5.11
-          EOF
-          cd ..
-          cd api_gateway
-          touch .env
       
       - name: Start Docker Compose
-        run: docker compose --profile user_api up -d
+        run: docker compose --profile api_gateway up -d
 
       - name: Wait for API to come up
         run: |
           for i in {1..30}; do
-            if curl -s http://localhost:3002/api/${{ secrets.USER_SERVICE_API_VERSION }}/status > /dev/null; then
+            if curl -s http://localhost:4001/api/${{ secrets.USER_SERVICE_API_VERSION }}/status > /dev/null; then
               echo "User Service API is up!"
               exit 0
             fi

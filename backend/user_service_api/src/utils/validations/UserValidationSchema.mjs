@@ -12,27 +12,8 @@ const USER_EMAIL_MAX_CHARACTERS_SIZE = process.env.USER_EMAIL_MAX_CHARACTERS_SIZ
 const USER_PASSWORD_MIN_CHARACTERS_SIZE = process.env.USER_PASSWORD_MIN_CHARACTERS_SIZE || 12;
 
 
-
-
 class UserValidationSchema {
     constructor() {}
-
-    static userId() {
-        return {
-            user_id: {
-                notEmpty: {
-                    errorMessage: {
-                        error: "User ID cannot be empty!"
-                    }
-                },
-                isInt: {
-                    errorMessage: {
-                        error: "User ID must be a Number!"
-                    }
-                }
-            }
-        };
-    }
 
     static userNameValidation() {
         return {
@@ -42,7 +23,8 @@ class UserValidationSchema {
                         error: "User name can't be empty!"
                     }
                 },
-                isString: {
+                custom: {
+                    options: (value) => typeof value === 'string',
                     errorMessage: {
                         error: "User name must be a string!"
                     }
@@ -74,7 +56,8 @@ class UserValidationSchema {
                         error: "First name can't be empty!"
                     }
                 },
-                isString: {
+                custom: {
+                    options: (value) => typeof value === 'string',
                     errorMessage: {
                         error: "First name must be a string!"
                     }
@@ -106,7 +89,8 @@ class UserValidationSchema {
                         error: "Surname can't be empty!"
                     }
                 },
-                isString: {
+                custom: {
+                    options: (value) => typeof value === 'string',
                     errorMessage: {
                         error: "Surname must be a string!"
                     }
@@ -138,7 +122,8 @@ class UserValidationSchema {
                         error: "Email can't be empty!"
                     }
                 },
-                isString: {
+                custom: {
+                    options: (value) => typeof value === 'string',
                     errorMessage: {
                         error: "Email must be a string!"
                     }
@@ -182,7 +167,8 @@ class UserValidationSchema {
                         error: "Password can't be empty!"
                     }
                 },
-                isString: {
+                custom: {
+                    options: (value) => typeof value === 'string',
                     errorMessage: {
                         error: "Password must be a string!"
                     }
@@ -207,7 +193,8 @@ class UserValidationSchema {
                         error: "Confirm password cannot be empty!"
                     }
                 },
-                isString: {
+                custom: {
+                    options: (value) => typeof value === 'string',
                     errorMessage: {
                         error: "Confirm password must be a string!"
                     }
@@ -238,7 +225,8 @@ class UserValidationSchema {
                         error: "Old password cannot be empty!"
                     }
                 },
-                isString: {
+                custom: {
+                    options: (value) => typeof value === 'string',
                     errorMessage: {
                         error: "Old password must be a string!"
                     }
@@ -255,7 +243,7 @@ class UserValidationSchema {
         };
     }
 
-    static followerId() {
+    static followerIdValidation() {
         return {
             follower_id: {
                 notEmpty: {
@@ -272,7 +260,7 @@ class UserValidationSchema {
         };
     }
 
-    static unfollowId() {
+    static unfollowIdValidation() {
         return {
             unfollow_id: {
                 notEmpty: {
@@ -288,6 +276,39 @@ class UserValidationSchema {
             }
         };
     }
+
+    static userNameFilterValidation() {
+        return {
+            user_name: {
+                optional: true,
+                isString: {
+                    errorMessage: "User name must be a string!"
+                },
+                matches: {
+                    options: [/^[A-Za-z0-9._-]+$/],
+                    errorMessage: "User name can only contain letters, numbers, dots (.), underscores (_) and dashes (-), without spaces!"
+                }
+            }
+        };
+    }
+
+    static userIdsValidation() {
+        return {
+            ids: {
+                optional: true,
+                isArray: {
+                    errorMessage: 'Ids must be an array of numbers'
+                }
+            },
+            'ids.*': {
+                isInt: {
+                    errorMessage: 'Each user ID must be an integer'
+                },
+                toInt: true
+            }
+        };
+    }
+
 }
 
 export default UserValidationSchema;

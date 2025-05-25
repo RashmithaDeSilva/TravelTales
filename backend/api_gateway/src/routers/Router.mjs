@@ -6,6 +6,7 @@ import UserRouter from './UserRouter.mjs';
 import CountryFinderRouter from './CountryFinderRouter.mjs';
 import ToxicityDetectionRouter from './ToxicityDetectionRouter.mjs';
 import PostManagerRouter from './PostManagerRouter.mjs';
+import NotificationRouter from './NotificationRouter.mjs';
 
 
 dotenv.config();
@@ -16,6 +17,7 @@ router.use('/auth/findecountry', CountryFinderRouter);
 router.use('/auth/toxicitydetection', ToxicityDetectionRouter);
 router.use('/auth/user', UserRouter);
 router.use('/auth/post', PostManagerRouter);
+router.use('/auth/notification', NotificationRouter);
 
 
 /**

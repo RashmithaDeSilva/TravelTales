@@ -8,8 +8,8 @@ import CommonErrors from '../utils/errors/CommonErrors.mjs';
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET || '5iLt1QIXlARhJc2mSwXB5yETHH+ZsKslfB03XJpntC'; // use the same secret as the api gateway
 const USER_SERVICE_API = process.env.USER_SERVICE_API || 'http://172.20.5.21:4001'; // /api/v1/auth/user/status
-const NOTIFICATION_API_KEY = process.env.NOTIFICATION_API_KEY;
-const allowedIps = ['127.0.0.1', '::1', '172.20.5.30', '172.20.5.40'];
+const NOTIFICATION_API_KEY = process.env.NOTIFICATION_API_KEY || '5iLt1QIXlARhJc2mSwXB5yETHH+ZsKslfB03XJpntC';
+const allowedIps = ['127.0.0.1', '::1', '172.20.5.50', '172.20.5.52'];
 
 
 const isAuthenticated = async (req, res, next) => {

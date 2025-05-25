@@ -57,9 +57,27 @@ class NotificationDAO {
     // Get all notifications for a user
     async getNotifications(userId) {
         try {
-            const [rows] = await pool.query(`SELECT * FROM notification_table WHERE user_id = ?;`, [userId]);
-            console.log(rows);
-            return rows;
+            // This returns only laters 10 notifications
+            const [rows] = await pool.query(
+            `
+                SELECT * 
+                FROM notification_table 
+                WHERE user_id = ? 
+                ORDER BY created_at DESC 
+                LIMIT 10;
+            `, [userId]);
+
+            // Notifications
+            const notifications = rows.map(row => new NotificationModel(
+                row.user_id,
+                row.title,
+                row.content,
+                row.info,
+                row.is_check,
+                row.created_at,
+                row.id,
+            ));
+            return notifications;
 
         } catch (error) {
             throw error;

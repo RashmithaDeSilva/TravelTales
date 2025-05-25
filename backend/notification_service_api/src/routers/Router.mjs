@@ -7,7 +7,7 @@ import NotificationRouter from './NotificationRouter.mjs';
 dotenv.config();
 const API_VERSION = process.env.API_VERSION || 'v1';
 const router = Router();
-router.use('/auth/ntification', NotificationRouter);
+router.use('/auth/notification', NotificationRouter);
 
 
 /**

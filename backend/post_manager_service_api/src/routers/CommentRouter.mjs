@@ -15,7 +15,7 @@ const commentService = new CommentService();
 
 /**
  * @swagger
- * /api/v1/auth/comment/:
+ * /api/v1/auth/post/comment/:
  *   get:
  *     summary: Get comments for a post
  *     description: Returns paginated comments for a specific post.
@@ -31,14 +31,14 @@ const commentService = new CommentService();
  *           example: 12
  *       - in: query
  *         name: page
- *         required: false
+ *         required: true
  *         description: Page number for pagination (defaults to 1)
  *         schema:
  *           type: integer
  *           example: 1
  *       - in: query
  *         name: size
- *         required: false
+ *         required: true
  *         description: Number of comments per page (defaults to 10)
  *         schema:
  *           type: integer
@@ -151,7 +151,7 @@ router.get('/', [
 
 /**
  * @swagger
- * /api/v1/auth/comment/create:
+ * /api/v1/auth/post/comment/create:
  *   post:
  *     summary: Create a new comment
  *     description: Creates a comment for a specific post. Requires JWT authentication. The comment will be analyzed before being published.
@@ -297,7 +297,7 @@ router.post('/create', isAuthenticated, [
 
 /**
  * @swagger
- * /api/v1/auth/comment/update:
+ * /api/v1/auth/post/comment/update:
  *   put:
  *     summary: Update a comment
  *     description: Updates an existing comment. Requires JWT authentication. The updated comment will be analyzed before being published.
@@ -444,7 +444,7 @@ router.put('/update', isAuthenticated, [
 
 /**
  * @swagger
- * /api/v1/auth/comment/delete:
+ * /api/v1/auth/post/comment/delete:
  *   delete:
  *     summary: Delete a comment
  *     description: Deletes a comment by ID. Requires JWT authentication.

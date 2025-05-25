@@ -9,7 +9,7 @@ dotenv.config();
 const API_VERSION = process.env.API_VERSION || 'v1';
 const router = Router();
 router.use('/auth/post', PostRouter);
-router.use('/auth/comment', CommentRouter);
+router.use('/auth/post/comment', CommentRouter);
 
 
 /**

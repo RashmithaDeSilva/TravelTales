@@ -103,15 +103,15 @@ jobs:
       #     name: api_gateway_results
       #     path: backend/api_gateway/results.txt
 
-      # - name: Push Docker image to Docker Hub
-      #   run: |
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_api_gateway:${{ secrets.API_GATEWAY_VERSION }}
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_api_gateway:latest
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_api_gateway:${{ secrets.API_GATEWAY_VERSION }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_api_gateway:latest
 
-      # - name: Push Docker image to Github Container Registry
-      #   run: |
-      #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_api_gateway:${{ secrets.API_GATEWAY_VERSION }}
-      #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_api_gateway:latest
+      - name: Push Docker image to Github Container Registry
+        run: |
+          docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_api_gateway:${{ secrets.API_GATEWAY_VERSION }}
+          docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_api_gateway:latest
 
   User_Service_API_Container_Build_Test_Push:
     runs-on: ubuntu-latest
@@ -203,21 +203,21 @@ jobs:
       - name: Stop Docker Compose
         run: docker compose down
 
-      # - name: Upload test results
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: user_service_api_results
-      #     path: backend/user_service_api/results.txt
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: user_service_api_results
+          path: backend/user_service_api/results.txt
 
-      # - name: Push Docker image to Docker Hub
-      #   run: |
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_user_service_api:${{ secrets.USER_SERVICE_API_VERSION }}
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_user_service_api:latest
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_user_service_api:${{ secrets.USER_SERVICE_API_VERSION }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_user_service_api:latest
 
-      # - name: Push Docker image to Github Container Registry
-      #   run: |
-      #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_user_service_api:${{ secrets.USER_SERVICE_API_VERSION }}
-      #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_user_service_api:latest
+      - name: Push Docker image to Github Container Registry
+        run: |
+          docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_user_service_api:${{ secrets.USER_SERVICE_API_VERSION }}
+          docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_user_service_api:latest
 
   Post_Service_API_Container_Build_Test_Push:
     runs-on: ubuntu-latest
@@ -602,15 +602,15 @@ jobs:
           name: country_finder_service_api_results
           path: backend/country_finder_service_api/results.txt
 
-      # - name: Push Docker image to Docker Hub
-      #   run: |
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }}
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_country_finder_service_api:latest
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_country_finder_service_api:latest
 
-      # - name: Push Docker image to Github Container Registry
-      #   run: |
-      #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }}
-      #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_country_finder_service_api:latest
+      - name: Push Docker image to Github Container Registry
+        run: |
+          docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_country_finder_service_api:${{ secrets.COUNTRY_FINDER_SERVICE_API_VERSION }}
+          docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_country_finder_service_api:latest
   
   Toxicity_Detection_Service_API_Container_Build_Test_Push:
     runs-on: ubuntu-latest
@@ -677,12 +677,13 @@ jobs:
           name: toxicity_detection_service_api_results
           path: backend/toxicity_detection_service_api/results.txt
 
-      # - name: Push Docker image to Docker Hub
-      #   run: |
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }}
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_toxicity_detection_service_api:latest
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_toxicity_detection_service_api:latest
 
-      # - name: Push Docker image to Github Container Registry
-      #   run: |
-      #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }}
-      #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_toxicity_detection_service_api:latest
+      - name: Push Docker image to Github Container Registry
+        run: |
+          docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_toxicity_detection_service_api:${{ secrets.TOXICITY_DETECTION_SERVICE_API_VERSION }}
+          docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_toxicity_detection_service_api:latest
+          

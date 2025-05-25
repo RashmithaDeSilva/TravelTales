@@ -145,7 +145,7 @@ class PostDAO {
     }
 
     // Get posts
-    async getPosts(page = 1, pageSize = 25) {
+    async getPosts(page = PAGE, pageSize = SIZE) {
         try {
             const [rows] = await pool.query(
                 `

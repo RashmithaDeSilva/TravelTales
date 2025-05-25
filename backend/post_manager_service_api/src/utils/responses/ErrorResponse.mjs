@@ -4,6 +4,7 @@ import CommonErrors from "../errors/CommonErrors.mjs";
 import PostErrors from '../errors/PostErrors.mjs';
 import RestCountryErrors from '../errors/RestCountryErrors.mjs';
 import UserErrors from "../errors/UserErrors.mjs";
+import CommentErrors from "../errors/CommentErrors.mjs";
 import { LogTypes } from "../enums/LogTypes.mjs";
 import { log } from "../ConsoleLog.mjs";
 import dotenv from 'dotenv';
@@ -31,6 +32,9 @@ async function ErrorResponse(error, res, location = null, data = null) {
             case CommonErrors.VALIDATION_ERROR:
             case CommonErrors.INVALID_JSON_FORMAT:
             case UserErrors.INVALID_USER_NAME:
+            case CommentErrors.INVALID_COMMENT_ID:
+            case CommentErrors.INVALID_POST_ID:
+            case PostErrors.INVALID_POST_ID:
                 return res.status(400).send(StandardResponse(
                     false,
                     error.message,

@@ -1,9 +1,9 @@
 import PostModel from '../models/PostModel.mjs';
 import PostDAO from '../DAOs/PostDAO.mjs';
 import dotenv from 'dotenv';
-import WorkerChannelPromise from '../utils/WorkerChannel.mjs';
+import WorkerChannelPromise from '../utils/workerChannels/PostWorkerChannel.mjs';
 import RestCountryService from './RestCountryService.mjs';
-import { CountryTrype } from '../utils/enums/CountryTrype.mjs';
+import { CountryTrype } from '../utils/enums/CountryType.mjs';
 import { v4 as uuidv4 } from 'uuid';
 import NotificationServices from './NotificationServices.mjs';
 import NotificationModel from '../models/NotificationModel.mjs';
@@ -89,7 +89,7 @@ class PostService {
     }
 
     // Get posts by id
-    async getPostsById(postId) {
+    async getPostById(postId) {
         try {
             const post = await this.postDAO.getPostById(postId);
 

@@ -6,7 +6,7 @@ import { DitectType } from '../enums/DitectType.mjs';
 import PostErrors from '../errors/PostErrors.mjs';
 import CommonErrors from '../errors/CommonErrors.mjs';
 import ErrorLogService from '../../services/ErrorLogService.mjs';
-import { CountryTrype } from '../enums/CountryTrype.mjs';
+import { CountryTrype } from '../enums/CountryType.mjs';
 
 
 const countryFinderService = new CountryFinderService();
@@ -25,7 +25,7 @@ const getResult = async (jwt, jobId, ditectType) => {
             result = await countryFinderService.result(jwt, jobId);
         }
         if (result.status === 'done') return result;
-        await new Promise(resolve => setTimeout(resolve, 5000)); // wait for 3 minit
+        await new Promise(resolve => setTimeout(resolve, 5000)); // wait for 5s
     }
 }
 
@@ -71,8 +71,8 @@ const worker = async ({ jwt, post }) => {
             });
         }
         await notificationServices.create(jwt, new NotificationModel(
-            err,
-            post.title,
+            `Your post canot publish - ${ post.title }`,
+            err.message,
             {},
         ));
     }

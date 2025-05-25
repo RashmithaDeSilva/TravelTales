@@ -54,7 +54,7 @@ class UserService {
             const responseBody = await response.json();
 
             if (responseStatus === 400) {
-                throw new Error(UserErrors.INVALID_USER_NAME);
+                throw new Error(UserErrors.INVALID_USER_ID);
             }
 
             if (responseStatus !== 200) {

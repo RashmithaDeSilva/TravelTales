@@ -144,8 +144,8 @@ const postService = new PostService();
  */
 router.get('/', [
     checkSchema({
-        ...PostValidationSchema.pageQuery(),
-        ...PostValidationSchema.sizeQuery(),
+        ...PostValidationSchema.pageQueryValidation(),
+        ...PostValidationSchema.sizeQueryValidation(),
     })
 ], async (req, res) => {
     try {
@@ -317,11 +317,11 @@ router.get('/', [
  */
 router.get('/find', [
     checkSchema({
-        ...PostValidationSchema.pageQuery(),
-        ...PostValidationSchema.sizeQuery(),
-        ...PostValidationSchema.countryQuery(),
-        ...PostValidationSchema.userNameQuery(),
-        ...PostValidationSchema.idQuery(),
+        ...PostValidationSchema.pageQueryValidation(),
+        ...PostValidationSchema.sizeQueryValidation(),
+        ...PostValidationSchema.countryQueryValidation(),
+        ...PostValidationSchema.userNameQueryValidation(),
+        ...PostValidationSchema.idQueryValidation(),
     })
 ], async (req, res) => {
     const errors = validationResult(req);
@@ -334,7 +334,7 @@ router.get('/find', [
     try {
         const posts = (!postId) 
         ? await postService.getPostsFilter(page, size, country, userName) :
-        await postService.getPostsById(postId);
+        await postService.getPostById(postId);
         return res.status(200).send(StandardResponse(
             true,
             "Posts.",
@@ -473,10 +473,10 @@ router.get('/find', [
  */
 router.post('/create', isAuthenticated, [
     checkSchema({
-        ...PostValidationSchema.title(),
-        ...PostValidationSchema.content(),
-        ...PostValidationSchema.country(),
-        ...PostValidationSchema.date_of_visit(),
+        ...PostValidationSchema.titleValidation(),
+        ...PostValidationSchema.contentValidation(),
+        ...PostValidationSchema.countryValidation(),
+        ...PostValidationSchema.date_of_visitValidation(),
     })
 ], async (req, res) => {
     const errors = validationResult(req);

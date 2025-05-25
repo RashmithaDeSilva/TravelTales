@@ -46,6 +46,39 @@ class NotificationServices {
         }
     }
 
+    async send(jwt, notification) {
+        let responseStatus;
+        let responseBody;
+        try {
+            const response = await fetch(`${ notificationServiceApi }/send`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `${ notificationApiKey } ${ jwt }`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title: notification.title,
+                    content: notification.content,
+                    info: notification.info,
+                    user_id: notification.userId,
+                }),
+            });
+            responseStatus = response.status;
+            responseBody = await response.json();
+            if (responseStatus !== 200) {
+                throw new Error(CommonErrors.INTERNAL_SERVER_ERROR);
+            }
+
+        } catch (error) {
+            errorLogService.createLog('NotificationServices.create', error, {
+                "jwt": jwt,
+                "notification": notification,
+                "responseStatus": responseStatus,
+                "responseBody": responseBody,
+            });
+        }
+    }
+
 }
 
 export default NotificationServices;

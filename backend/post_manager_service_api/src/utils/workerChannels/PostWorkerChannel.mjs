@@ -1,8 +1,8 @@
 import workerThread from 'worker-thread';
-import { worker } from './workers/PostWorker.mjs';
-import ErrorLogService from '../services/ErrorLogService.mjs';
-import { log } from './ConsoleLog.mjs';
-import { LogTypes } from './enums/LogTypes.mjs';
+import { worker } from '../workers/PostWorker.mjs';
+import ErrorLogService from '../../services/ErrorLogService.mjs';
+import { log } from '../ConsoleLog.mjs';
+import { LogTypes } from '../enums/LogTypes.mjs';
 
 let instance;
 const errorLogService = new ErrorLogService();
@@ -10,7 +10,7 @@ let postServiceInstance;
 
 async function getPostService() {
     if (!postServiceInstance) {
-        const { default: PostService } = await import('../services/PostService.mjs');
+        const { default: PostService } = await import('../../services/PostService.mjs');
         postServiceInstance = new PostService();
     }
     return postServiceInstance;
@@ -22,7 +22,7 @@ async function buildPool() {
     channel.on('done', async (error, result) => {
         if (error) {
             try {
-                await errorLogService.createLog("WorkerChannel", error);
+                await errorLogService.createLog("PostWorkerChannel", error);
             } catch (logError) {
                 log(LogTypes.ERROR, logError);
             }
@@ -35,7 +35,7 @@ async function buildPool() {
 
         } catch (err) {
             try {
-                await errorLogService.createLog("WorkerChannel", error);
+                await errorLogService.createLog("PostWorkerChannel", error);
 
             } catch (e) {
                 log(LogTypes.ERROR, `Post creation failed: ${err}`);
@@ -43,7 +43,7 @@ async function buildPool() {
         }
     });
 
-    channel.on('stop', () => log(LogTypes.INFO, "Worker Channel Stopped"));
+    channel.on('stop', () => log(LogTypes.INFO, "Post Worker Channel Stopped"));
     return channel;
 }
 

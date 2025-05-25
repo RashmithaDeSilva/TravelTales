@@ -12,7 +12,7 @@ const COUNTRY_MAX_CHARACTERS_SIZE = process.env.COUNTRY_MAX_CHARACTERS_SIZE || 1
 class PostValidationSchema {
     constructor() {}
 
-    static title() {
+    static titleValidation() {
         return {
             title: {
                 notEmpty: {
@@ -39,7 +39,7 @@ class PostValidationSchema {
         }
     }
 
-    static content() {
+    static contentValidation() {
         return {
             content: {
                 notEmpty: {
@@ -66,7 +66,7 @@ class PostValidationSchema {
         }
     }
 
-    static country() {
+    static countryValidation() {
         return {
             country: {
                 notEmpty: {
@@ -93,7 +93,7 @@ class PostValidationSchema {
         }
     }
 
-    static date_of_visit() {
+    static date_of_visitValidation() {
         return {
             date_of_visit: {
                 notEmpty: {
@@ -111,7 +111,7 @@ class PostValidationSchema {
         }
     }
 
-    static pageQuery() {
+    static pageQueryValidation() {
         return {
             page: {
                 in: ['query'],
@@ -127,7 +127,7 @@ class PostValidationSchema {
         };
     }
 
-    static sizeQuery() {
+    static sizeQueryValidation() {
         return {
             size: {
                 in: ['query'],
@@ -143,7 +143,7 @@ class PostValidationSchema {
         };
     }
 
-    static countryQuery() {
+    static countryQueryValidation() {
         return {
             country: {
                 in: ['query'],
@@ -155,7 +155,7 @@ class PostValidationSchema {
         };
     }
 
-    static userNameQuery() {
+    static userNameQueryValidation() {
         return {
             user_name: {
                 in: ['query'],
@@ -167,7 +167,7 @@ class PostValidationSchema {
         };
     }
 
-    static idQuery() {
+    static idQueryValidation() {
         return {
             post_id: {
                 in: ['query'],

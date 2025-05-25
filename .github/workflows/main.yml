@@ -74,7 +74,10 @@ jobs:
             ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_api_gateway:latest
       
       - name: Start Docker Compose
-        run: docker compose --profile api_gateway up -d
+        run: |
+          cd ../..
+          docker compose --profile api_gateway up -d
+
 
       - name: Wait for API to come up
         run: |
@@ -330,7 +333,9 @@ jobs:
             ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_user_service_api:latest
       
       - name: Start Docker Compose
-        run: docker compose --profile user_api up -d
+        run: |
+          cd ../..
+          docker compose --profile api_gateway up -d
 
       - name: Wait for API to come up
         run: |

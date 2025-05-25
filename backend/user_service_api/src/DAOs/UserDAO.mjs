@@ -136,7 +136,6 @@ class UserDAO {
         }
     }
 
-
     // Update user
     async update(user) {
         try {

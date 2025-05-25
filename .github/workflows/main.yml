@@ -424,7 +424,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          cd backend/post_service_api
+          cd backend/post_manager_service_api
           docker build -t ${{ secrets.DOCKER_USERNAME }}/traveltales_post_service_api:${{ secrets.POST_SERVICE_API_VERSION }} .
           docker tag ${{ secrets.DOCKER_USERNAME }}/traveltales_post_service_api:${{ secrets.POST_SERVICE_API_VERSION }} \
             ${{ secrets.DOCKER_USERNAME }}/traveltales_post_service_api:latest
@@ -465,15 +465,15 @@ jobs:
       #     name: post_service_api_results
       #     path: backend/post_service_api/results.txt
 
-      # - name: Push Docker image to Docker Hub
-      #   run: |
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_post_service_api:${{ secrets.POST_SERVICE_API_VERSION }}
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_post_service_api:latest
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_post_service_api:${{ secrets.POST_SERVICE_API_VERSION }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_post_service_api:latest
 
-      # - name: Push Docker image to Github Container Registry
-      #   run: |
-      #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_post_service_api:${{ secrets.POST_SERVICE_API_VERSION }}
-      #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_post_service_api:latest 
+      - name: Push Docker image to Github Container Registry
+        run: |
+          docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_post_service_api:${{ secrets.POST_SERVICE_API_VERSION }}
+          docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_post_service_api:latest 
 
   Notification_Service_API_Container_Build_Test_Push:
     runs-on: ubuntu-latest
@@ -571,12 +571,12 @@ jobs:
       #     name: notification_service_api_results
       #     path: backend/notification_service_api/results.txt
 
-      # - name: Push Docker image to Docker Hub
-      #   run: |
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_notification_service_api:${{ secrets.NOTIFICATION_SERVICE_API_VERSION }}
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_notification_service_api:latest
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_notification_service_api:${{ secrets.NOTIFICATION_SERVICE_API_VERSION }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/traveltales_notification_service_api:latest
 
-      # - name: Push Docker image to Github Container Registry
-      #   run: |
-      #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_notification_service_api:${{ secrets.NOTIFICATION_SERVICE_API_VERSION }}
-      #     docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_notification_service_api:latest 
+      - name: Push Docker image to Github Container Registry
+        run: |
+          docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_notification_service_api:${{ secrets.NOTIFICATION_SERVICE_API_VERSION }}
+          docker push ghcr.io/${{ secrets.USERSNAME_GITHUB }}/traveltales_notification_service_api:latest 

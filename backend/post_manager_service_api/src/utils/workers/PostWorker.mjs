@@ -29,7 +29,7 @@ const getResult = async (jwt, jobId, ditectType) => {
     }
 }
 
-const worker = async ({ jwt, post }) => {
+const worker = async ({ jwt, post, jobType }) => {
     try {
         const titleToxicity = await toxicityDetectionService.predict(jwt, post.title);
         const contentToxicity = await toxicityDetectionService.predict(jwt, post.content);
@@ -58,6 +58,7 @@ const worker = async ({ jwt, post }) => {
         return {
             "jwt": jwt,
             "post": post,
+            "jobType": jobType,
         };
 
     } catch (error) {
@@ -68,6 +69,7 @@ const worker = async ({ jwt, post }) => {
             await errorLogService.createLog('PostWorker', error, {
                 "jwt": jwt, 
                 "post": post,
+                "jobType": jobType,
             });
         }
         await notificationServices.create(jwt, new NotificationModel(

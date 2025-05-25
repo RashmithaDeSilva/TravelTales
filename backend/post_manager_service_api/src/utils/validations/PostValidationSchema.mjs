@@ -182,6 +182,22 @@ class PostValidationSchema {
         };
     }
 
+    static idValidation() {
+        return {
+            id: {
+                notEmpty: {
+                    errorMessage: "ID can't be empty!"
+                },
+                isInt: {
+                    errorMessage: {
+                        error: "ID must be a Number!"
+                    }
+                },
+                toInt: true,
+            }
+        };
+    }
+
 }
 
 export default PostValidationSchema;

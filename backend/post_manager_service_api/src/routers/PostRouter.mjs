@@ -481,7 +481,7 @@ router.post('/create', isAuthenticated, [
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return await ErrorResponse(new Error(CommonErrors.VALIDATION_ERROR), res, '/post/create/', errors);
+        return await ErrorResponse(new Error(CommonErrors.VALIDATION_ERROR), res, '/post/create', errors);
     }
     const data = matchedData(req);
 
@@ -498,6 +498,304 @@ router.post('/create', isAuthenticated, [
         {
             post_status: "pending",
         },
+        null
+    ));
+});
+
+/**
+ * @swagger
+ * /api/v1/auth/post/update:
+ *   post:
+ *     summary: Update a post
+ *     description: Updates an existing post. Requires JWT authentication. The update will be processed asynchronously.
+ *     tags:
+ *       - Post
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - title
+ *               - content
+ *               - country
+ *               - date_of_visit
+ *             properties:
+ *               id:
+ *                 type: integer
+ *                 description: ID of the post to update
+ *                 example: 12
+ *               title:
+ *                 type: string
+ *                 description: Title of the post
+ *                 example: "Trip to Tokyo"
+ *               content:
+ *                 type: string
+ *                 description: Main content of the post
+ *                 example: "It was an amazing trip to Tokyo!"
+ *               country:
+ *                 type: string
+ *                 description: Country visited
+ *                 example: "Japan"
+ *               date_of_visit:
+ *                 type: string
+ *                 format: date
+ *                 description: Date of the visit
+ *                 example: "2025-04-14"
+ *     responses:
+ *       202:
+ *         description: Post update accepted and pending analysis
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Successfully Your post will be update after analysis."
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     post_status:
+ *                       type: string
+ *                       example: "pending"
+ *                 errors:
+ *                   type: "null"
+ *                   example: null
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Validation error"
+ *                 data:
+ *                   type: "null"
+ *                   example: null
+ *                 errors:
+ *                   type: object
+ *                   example:
+ *                     title: "Title is required"
+ *       401:
+ *         description: Unauthorized (missing or invalid JWT token)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *                 data:
+ *                   type: "null"
+ *                   example: null
+ *                 errors:
+ *                   type: "null"
+ *                   example: null
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ *                 data:
+ *                   type: "null"
+ *                   example: null
+ *                 errors:
+ *                   type: "null"
+ *                   example: null
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+router.post('/update', isAuthenticated, [
+    checkSchema({
+        ...PostValidationSchema.idValidation(),
+        ...PostValidationSchema.titleValidation(),
+        ...PostValidationSchema.contentValidation(),
+        ...PostValidationSchema.countryValidation(),
+        ...PostValidationSchema.date_of_visitValidation(),
+    })
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return await ErrorResponse(new Error(CommonErrors.VALIDATION_ERROR), res, '/post/update', errors);
+    }
+    const data = matchedData(req);
+
+    try {
+        await postService.updateWorker(data, req.user.id, req.headers['authorization'].split(' ')[1]);
+        
+    } catch (error) {
+        return await ErrorResponse(error, res, '/post/create', data);
+    }
+
+    return res.status(202).send(StandardResponse(
+        true,
+        "Successfully Your post will be update after analysis.",
+        {
+            post_status: "pending",
+        },
+        null
+    ));
+});
+
+/**
+ * @swagger
+ * /api/v1/auth/post/delete:
+ *   delete:
+ *     summary: Delete a post
+ *     description: Deletes a post by ID. Requires JWT authentication.
+ *     tags:
+ *       - Post
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *             properties:
+ *               id:
+ *                 type: integer
+ *                 description: ID of the post to delete
+ *                 example: 12
+ *     responses:
+ *       200:
+ *         description: Successfully deleted the post
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Successfully delete your post."
+ *                 data:
+ *                   type: "null"
+ *                   example: null
+ *                 errors:
+ *                   type: "null"
+ *                   example: null
+ *       400:
+ *         description: Validation error (e.g., missing or invalid ID)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Validation error"
+ *                 data:
+ *                   type: "null"
+ *                   example: null
+ *                 errors:
+ *                   type: object
+ *                   example:
+ *                     id: "Post ID is required"
+ *       401:
+ *         description: Unauthorized (JWT token missing or invalid)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *                 data:
+ *                   type: "null"
+ *                   example: null
+ *                 errors:
+ *                   type: "null"
+ *                   example: null
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ *                 data:
+ *                   type: "null"
+ *                   example: null
+ *                 errors:
+ *                   type: "null"
+ *                   example: null
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+router.delete('/delete', isAuthenticated, [
+    checkSchema({
+        ...PostValidationSchema.idValidation(),
+    })
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return await ErrorResponse(new Error(CommonErrors.VALIDATION_ERROR), res, '/post/delete', errors);
+    }
+    const data = matchedData(req);
+
+    try {
+        await postService.delete(data.id, req.user.id);
+        
+    } catch (error) {
+        return await ErrorResponse(error, res, '/post/delete', data);
+    }
+
+    return res.status(200).send(StandardResponse(
+        true,
+        "Successfully delete your post.",
+        null,
         null
     ));
 });

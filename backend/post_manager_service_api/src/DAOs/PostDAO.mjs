@@ -193,6 +193,65 @@ class PostDAO {
         }
     }
 
+    // Check if comment exists
+    async isExist(postId) {
+        try {
+            const [result] = await pool.query(`
+                SELECT EXISTS(
+                    SELECT 1 FROM posts WHERE id = ?
+                ) AS post_exists;
+            `, [postId]);
+            if (result[0].post_exists !== 1) {
+                throw new Error(PostErrors.INVALID_POST_ID);
+            }
+            return true;
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Update comment
+    async update(post) {
+        try {
+            const isExist = await this.isExist(post.id);
+            if (isExist) {
+                const [result] = await pool.query(`
+                    UPDATE posts
+                    SET title = ?,
+                    content = ?,
+                    country = ?,
+                    date_of_visit = ?
+                    WHERE id = ? AND user_id = ?
+                `, [post.title, post.content, post.country, post.dateOfVisit, post.id, post.userId]);
+                return result.affectedRows !== 0;
+            }
+            return false;
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Delete comment
+    async delete(post) {
+        try {
+            const isExist = await this.isExist(post.id);
+            if (isExist) {
+                const [result] = await pool.query(`
+                    DELETE FROM posts
+                    WHERE id = ? AND user_id = ?
+                `, [post.id, post.userId]);
+                
+                return result.affectedRows !== 0;
+            }
+            return false;
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
 }
 
 

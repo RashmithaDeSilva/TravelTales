@@ -49,6 +49,7 @@ const worker = async ({ jwt, comment, jobType }) => {
             await errorLogService.createLog('CommentWorker', error, {
                 "jwt": jwt, 
                 "post": post,
+                "jobType": jobType,
             });
         }
         await notificationServices.create(jwt, new NotificationModel(

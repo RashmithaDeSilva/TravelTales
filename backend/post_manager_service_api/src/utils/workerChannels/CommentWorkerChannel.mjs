@@ -40,7 +40,7 @@ async function buildPool() {
 
             if (result.jobType === CommentJobType.UPDATE) {
                 await service.update(result.comment);
-            }   
+            }
 
         } catch (err) {
             try {

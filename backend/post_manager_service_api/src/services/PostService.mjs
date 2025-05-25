@@ -9,6 +9,7 @@ import NotificationServices from './NotificationServices.mjs';
 import NotificationModel from '../models/NotificationModel.mjs';
 import UserService from './UserService.mjs';
 import UserErrors from '../utils/errors/UserErrors.mjs';
+import { PostJobType } from '../utils/enums/PostJobType.mjs';
 
 
 dotenv.config();
@@ -62,7 +63,7 @@ class PostService {
             }
 
             const workerChannel = await WorkerChannelPromise;
-            workerChannel.add({ jwt, post });
+            workerChannel.add({ jwt, post, jobType: PostJobType.CREATE });
             
         } catch (error) {
             throw error;
@@ -127,6 +128,55 @@ class PostService {
             }
 
             return posts;
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Update post
+    async update(post) {
+        try {
+            // Update comment
+            await this.postDAO.update(post);
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Update post worker
+    async updateWorker(data, userId, jwt) {
+        try {
+            // Verify country
+            if (data.country !== CountryTrype.FIND) {
+                await restCountryService.verify(jwt, data.country);
+            }
+
+            const post = new PostModel(userId, data.title, data.content, 
+                data.country, data.date_of_visit, null, null, data.id,);
+            const workerChannel = await WorkerChannelPromise;
+            workerChannel.add({ jwt, post, jobType: PostJobType.UPDATE });
+            
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Delete post
+    async delete(postId, userId) {
+        try {
+            // Delete comment
+            await this.postDAO.delete(new PostModel(
+                userId,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                postId,
+            ));
 
         } catch (error) {
             throw error;

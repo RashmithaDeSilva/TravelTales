@@ -3,10 +3,13 @@ import { worker } from '../workers/PostWorker.mjs';
 import ErrorLogService from '../../services/ErrorLogService.mjs';
 import { log } from '../ConsoleLog.mjs';
 import { LogTypes } from '../enums/LogTypes.mjs';
+import { PostJobType } from '../enums/PostJobType.mjs';
+
 
 let instance;
 const errorLogService = new ErrorLogService();
 let postServiceInstance;
+
 
 async function getPostService() {
     if (!postServiceInstance) {
@@ -31,7 +34,13 @@ async function buildPool() {
 
         try {
             const service = await getPostService();
-            await service.create(result.jwt, result.post);
+            if (result.jobType === PostJobType.CREATE) {
+                await service.create(result.jwt, result.post);
+            }
+
+            if (result.jobType === PostJobType.UPDATE) {
+                await service.update(result.post);
+            }   
 
         } catch (err) {
             try {

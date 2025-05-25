@@ -1,1 +1,14 @@
-<p>login works!</p>
+<div class="login-container">
+  <form (submit)="login(); $event.preventDefault()" class="login-box">
+    <h2>Login</h2>
+
+    <input type="email" placeholder="Email" [(ngModel)]="email" name="email" required />
+    <input type="password" placeholder="Password" [(ngModel)]="password" name="password" required />
+
+    <button type="submit" [disabled]="loading">
+      {{ loading ? 'Logging in...' : 'Login' }}
+    </button>
+
+    <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+  </form>
+</div>

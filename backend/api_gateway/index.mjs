@@ -30,7 +30,18 @@ if (ENV === "DEV") {
 }
 
 // Allow all origins
-app.use(cors());
+app.use(cors({
+  origin: (origin, callback) => {
+    const allowedOrigins = ['http://localhost:7000', 'https://172.20.5.10:7000'];
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, origin);
+    } else {
+      callback(new Error(CommonErrors.AUTHENTICATION_FAILED));
+    }
+  },
+  credentials: true
+}));
+
 
 // Middleware
 app.use(express.json());

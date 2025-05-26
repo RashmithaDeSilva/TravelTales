@@ -176,6 +176,33 @@ services:
         ipv4_address: 172.20.5.51
     profiles: ["production", "notification_api"]
 
+  country_finder_service_api:
+    image: rashmithadesilva/traveltales_country_finder_service_api:v1
+    container_name: country_finder_service_api
+    restart: unless-stopped
+    working_dir: /app
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./configs/.country_finder_service_api
+    networks:
+      traveltales_network:
+        ipv4_address: 172.20.5.100
+    profiles: ["production", "country_finder_api"]
+
+  toxicity_detection_service_api:
+    image: rashmithadesilva/traveltales_toxicity_detection_service_api:v1
+    container_name: ctoxicity_detection_service_api
+    restart: unless-stopped
+    working_dir: /app
+    ports:
+      - "5001:5001"
+    env_file:
+      - ./configs/.toxicity_detection_service_api
+    networks:
+      traveltales_network:
+        ipv4_address: 172.20.5.101
+    profiles: ["production", "toxicity_detection_api"]
 
   # frontend:
   #   image: rashmithadesilva/traveltales_frontend:v1

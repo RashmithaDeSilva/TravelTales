@@ -1,4 +1,7 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../configs/environment';
+import { StandardResponse } from '../models/response.type';
 
 
 
@@ -6,6 +9,10 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class CsrfTokenService {
-  
-  constructor() { }
+  http = inject(HttpClient);
+
+  getCstfToken() {
+    const url = `${environment.API_GATEWAY}/csrf-token`;
+    return this.http.get<StandardResponse>(url);
+  }
 }

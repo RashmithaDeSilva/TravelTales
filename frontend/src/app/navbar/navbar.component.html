@@ -8,7 +8,16 @@
   </div>
 
   <div class="navbar__right">
-    <button routerLink="/login" class="btn login-btn">Login</button>
-    <button routerLink="/singin" class="btn signup-btn">Sign Up</button>
+    <!-- Show these if user is NOT online -->
+    <ng-container *ngIf="!userOnline">
+      <button routerLink="/login" class="btn login-btn">Login</button>
+      <button routerLink="/signin" class="btn signup-btn">Sign Up</button>
+    </ng-container>
+
+    <!-- Show these if user IS online -->
+    <ng-container *ngIf="userOnline">
+      <button class="btn logout-btn" (click)="logout()">Logout</button>
+      <a routerLink="/profile" class="avatar" title="User Profile">👤</a>
+    </ng-container>
   </div>
 </nav>

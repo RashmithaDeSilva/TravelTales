@@ -1,5 +1,4 @@
 import { inject, Injectable } from '@angular/core';
-import { Post } from '../models/post.type';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../configs/environment';
 import { StandardResponse } from '../models/response.type';

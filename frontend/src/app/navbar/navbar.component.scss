@@ -2,6 +2,30 @@ $primary-color: #0D47A1; // Dark Blue
 $secondary-color: #64B5F6; // Light Blue
 $white: #ffffff;
 
+.logout-btn {
+  background-color: #e53935; // red-ish for logout
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $secondary-color;
+  color: $white;
+  font-size: 1.5rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  text-decoration: none;
+  transition: background-color 0.3s;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $secondary-color;
+  }
+}
+
+
 .navbar {
   display: flex;
   align-items: center;

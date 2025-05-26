@@ -13,6 +13,7 @@ import tinyCsrf from 'tiny-csrf';
 import ErrorResponse from './src/utils/responses/ErrorResponse.mjs';
 import CsrfTokenErrors from './src/utils/errors/CsrfTokenErrors.mjs';
 import CommonErrors from './src/utils/errors/CommonErrors.mjs';
+import cors from 'cors';
 
 
 // Setup express app
@@ -27,6 +28,20 @@ const ENV = process.env.ENV || 'DEV';
 if (ENV === "DEV") {
     setupSwagger(app);
 }
+
+// Allow all origins
+app.use(cors({
+  origin: (origin, callback) => {
+    const allowedOrigins = ['http://localhost:7000', 'https://172.20.5.10:7000'];
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, origin);
+    } else {
+      callback(new Error(CommonErrors.AUTHENTICATION_FAILED));
+    }
+  },
+  credentials: true
+}));
+
 
 // Middleware
 app.use(express.json());

@@ -1,0 +1,23 @@
+<nav class="navbar">
+  <div class="navbar__left">
+    <a routerLink="/" class="navbar__brand">TravelTales</a>
+  </div>
+
+  <div class="navbar__center">
+    <input type="text" class="navbar__search" placeholder="Search destinations..." />
+  </div>
+
+  <div class="navbar__right">
+    <!-- Show these if user is NOT online -->
+    <ng-container *ngIf="!userOnline">
+      <button routerLink="/login" class="btn login-btn">Login</button>
+      <button routerLink="/signin" class="btn signup-btn">Sign Up</button>
+    </ng-container>
+
+    <!-- Show these if user IS online -->
+    <ng-container *ngIf="userOnline">
+      <button class="btn logout-btn" (click)="logout()">Logout</button>
+      <a routerLink="/profile" class="avatar" title="User Profile">👤</a>
+    </ng-container>
+  </div>
+</nav>

@@ -153,9 +153,6 @@ router.get('/', async (req, res) => {
 
         response = await fetch(apiUrl, {
             method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${req.user.jwt}`,
-            },
         });
 
         responseStatus = response.status;
@@ -338,9 +335,6 @@ router.get('/find', async (req, res) => {
 
         response = await fetch(apiUrl, {
             method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${req.user.jwt}`,
-            },
         });
 
         responseStatus = response.status;
@@ -940,9 +934,6 @@ router.get('/comment/', async (req, res) => {
 
         response = await fetch(apiUrl, {
             method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${req.user.jwt}`,
-            },
         });
 
         responseStatus = response.status;

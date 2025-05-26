@@ -37,6 +37,8 @@ TravelTales_Configs.zip
 # Frontend --------------------------------------------------------------
 # See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
+frontend/configs
+
 # Compiled output
 frontend/dist
 frontend/tmp
